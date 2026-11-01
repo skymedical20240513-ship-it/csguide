@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.0.9（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.4.1（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -348,8 +348,8 @@ p{margin:0 0 10px}
    ★ 下の SETTINGS_URL に、設定用GASのウェブアプリURLを貼ってください（最初に1回だけ）。
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
-const SETTINGS_URL = '';
-const APP_VERSION = 'β1.0.9';
+const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
+const APP_VERSION = 'β1.4.1';   // 設定用アプリ・GASと同じ版数
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -360,14 +360,15 @@ const DEFAULT_CONFIG = {
   dinnerBy: '19:00',               // 前日の夕食はここまで
   prevDayMeds: [                   // 前日の下剤
     { time:'20:00', title:'ピコスルファート（液体の下剤）を1本飲む',
-      steps:['ピコスルファート1本を、コップ1杯（200mL）以上の水に入れて飲む','同じコップで、水かお茶をもう1杯飲む'] },
+      steps:['ピコスルファート1本を、コップ1杯（200mL）以上の水に入れて飲む','さらに水かお茶を1杯飲む'] },
     { time:'21:00', title:'センノシド（錠剤の下剤）を3錠飲む',
-      steps:['センノシド3錠を、コップ1杯以上の水で飲む','同じコップで、水かお茶をもう1杯飲む'] },
+      steps:['センノシド3錠を、コップ1杯以上の水で飲む','さらに水かお茶を1杯飲む'] },
     { time:'寝る前', title:'水かお茶をコップ1杯飲む', steps:[] }
   ],
   bpMedBy: '07:00',                // 血圧の薬はこの時刻までに
 
-  home:   { start:'09:00', arrive:'12:30' },   // 自宅で飲む人
+  home:   { start:'09:00', arrive:'12:30' },   // 自宅で飲む人（検査時間がQRコード等で分からないときに使う）
+  arriveBeforeExam: 30,            // 自宅で飲む人：来院は検査の何分前か（検査時間が分かるとき。飲み始めも同じだけずらす）
   clinic: { arrive:'08:30' },                  // 院内で飲む人
 
   method: '2-1',                   // 標準の飲み方（QRコードで指定がないとき）
@@ -465,7 +466,7 @@ async function loadRemoteConfig(){
 // お試し版（院内で説明するとき、患者さん自身のスマホで触ってもらう）：本番とは別の場所に保存し、病院へは送らない
 const DEMO = new URLSearchParams(location.search).get('demo') === '1';
 const KEY = DEMO ? 'csguide_demo_v1' : 'csguide_state_v1';
-const blankState = () => ({ date:'', place:'', checks:{}, drinks:[], stools:[], nextAt:0, stopMobi:false, allDone:false, checkDone:false, noStool:false, callAck:false, curDone:false, baseOK:false, baseCall:'', extraCall:false, extraAck:false, lastWaterInProg:false, code:'', method:'', updatedAt:0 });
+const blankState = () => ({ date:'', examTime:'', schedAt:0, place:'', checks:{}, drinks:[], stools:[], nextAt:0, stopMobi:false, allDone:false, checkDone:false, noStool:false, callAck:false, curDone:false, baseOK:false, baseCall:'', extraCall:false, extraAck:false, lastWaterInProg:false, code:'', method:'', updatedAt:0 });
 let S = blankState();
 function load(){ try{ const v = localStorage.getItem(KEY); if(v) S = Object.assign(S, JSON.parse(v)); }catch(e){} }
 function save(){ S.updatedAt = Date.now(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} scheduleSync(); }
@@ -487,7 +488,7 @@ function stageText(){
 function summaryForStaff(){
   const t = totals(), i = S.drinks.length, done = STEPS.slice(0, i);
   const last = S.stools.length ? S.stools[S.stools.length-1] : null;
-  return { date:S.date, place:S.place, method:methodLabel(),
+  return { date:S.date, examTime:S.examTime || '', schedAt:S.schedAt || 0, place:S.place, method:methodLabel(),
     mobiCups:done.filter(x=>x.kind==='m').length, waterCups:done.filter(x=>x.kind==='w').length,
     mobiMl:t.m, waterMl:t.w, stools:S.stools.map(x=>x.lv), stoolTimes:S.stools.map(x=>x.t),
     lastLv:last ? last.lv : 0, lastStoolAt:last ? last.t : 0,
@@ -508,8 +509,41 @@ async function fetchPatient(code){
     const r = await fetch(SETTINGS_URL + (SETTINGS_URL.includes('?')?'&':'?') + 'action=patient&code=' + encodeURIComponent(code) + '&t=' + Date.now(), { signal:ctl.signal });
     clearTimeout(tm);
     const j = await r.json();
-    return (j && j.ok && j.state && typeof j.state === 'object') ? j.state : null;
+    if(!j || !j.ok) return null;
+    return { state: (j.state && typeof j.state === 'object') ? j.state : null, sched: (j.sched && typeof j.sched === 'object') ? j.sched : null };
   }catch(e){ return null; }
+}
+
+// 院内（内視鏡カレンダー）で予約が変わったとき：設定用アプリがGASに置いた予定を当てはめる
+// 戻り値：変わったかどうか
+const normTime = t => { const m = /^(\d{1,2}):?(\d{2})$/.exec(String(t || '').trim()); return m && Number(m[1]) < 24 && Number(m[2]) < 60 ? `${Number(m[1])}:${m[2]}` : ''; };
+function applySched(sc){
+  if(!sc || !/^\d{4}-\d{2}-\d{2}$/.test(sc.date || '')) return false;
+  if((sc.at || 0) <= (S.schedAt || 0)) return false;            // もう当てはめた予定
+  const time = normTime(sc.time), place = (sc.place === 'home' || sc.place === 'clinic') ? sc.place : S.place;
+  const mth = (sc.method && (CONFIG.methods[sc.method] || sc.method === 'standard')) ? sc.method : curMethod();
+  const changed = !!S.date && (sc.date !== S.date || time !== (S.examTime || '') || place !== S.place || mth !== curMethod());
+  if(sc.date !== S.date || mth !== curMethod()){ RESET_PROGRESS(); }
+  S.date = sc.date; S.examTime = time; S.place = place; S.method = mth; S.schedAt = sc.at || Date.now();
+  return changed;
+}
+function RESET_PROGRESS(){ S.checks = {}; S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
+function schedNotice(){
+  const sh = document.getElementById('sheet');
+  const t = S.examTime ? `　検査 ${S.examTime}` : '';
+  const arr = S.place === 'home' ? `<p>来院は <b>${homeArrive()}</b>、モビプレップの飲み始めは <b>${homeStart()}</b> です。</p>` : S.place === 'clinic' ? `<p>来院は <b>${CONFIG.clinic.arrive}</b> です。</p>` : '';
+  sh.innerHTML = `<h2>検査の予定が変わりました</h2><p style="font-size:20px"><b>${fmtD(parseD(S.date))}${esc(t)}</b></p>${arr}`
+    + `<p class="muted">予定や食事の説明は、新しい日付に合わせて表示しています。</p>`
+    + `<button type="button" class="btn" id="sClose" style="margin-top:8px">わかりました</button>`;
+  document.getElementById('sClose').onclick = closeSheet;
+  document.getElementById('ov').classList.remove('hidden');
+}
+// アプリを開いているときにも、院内で予定が変わっていないか確かめる
+async function refreshSched(){
+  if(DEMO || !S.code) return;
+  const r = await fetchPatient(S.code);
+  if(r && r.sched && applySched(r.sched)){ S.schedSeen = S.schedAt; save(); rebuild(); selDay = null; resetTo(S.date && S.place ? (current === 'vSetup' ? 'vSchedule' : current) : 'vSetup'); schedNotice(); }
+  else if(r && r.sched && (r.sched.at || 0) <= (S.schedAt || 0)){ /* 変わりなし */ }
 }
 
 /* ---------- 日付・時刻 ---------- */
@@ -564,8 +598,17 @@ let STEPS = [];
 // n杯飲んだあと、次の1杯までの間隔（分）
 const intervalFor = n => n <= CONFIG.slowCups ? CONFIG.slowMin : CONFIG.intervalMin;
 const minutesTo = n => { let t = 0; for(let k=1;k<=n;k++) t += intervalFor(k); return t; };
-// 自宅で飲む人の飲み始め（飲み方ごと。未設定なら共通の時刻）
-const homeStart = () => (MP() && MP().homeStart) || CONFIG.home.start;
+// 時刻 "H:MM" ⇔ 分
+const toMin = t => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(t || '')); return m ? Number(m[1])*60 + Number(m[2]) : NaN; };
+const fromMin = n => `${Math.floor(n/60)}:${String(((n % 60) + 60) % 60).padStart(2,'0')}`;
+// 自宅で飲む人の来院時刻：検査時間が分かれば「検査の arriveBeforeExam 分前」、分からなければ共通の時刻
+const homeArrive = () => { const e = toMin(S.examTime); return isNaN(e) ? CONFIG.home.arrive : fromMin(e - (Number(CONFIG.arriveBeforeExam) || 30)); };
+// 自宅で飲む人の飲み始め（飲み方ごと）。検査時間が分かるときは、来院時刻がずれた分だけ同じようにずらす
+const homeStart = () => {
+  const base = (MP() && MP().homeStart) || CONFIG.home.start;
+  if(isNaN(toMin(S.examTime))) return base;
+  return fromMin(toMin(base) + toMin(homeArrive()) - toMin(CONFIG.home.arrive));
+};
 const finishEstimate = () => addMin(homeStart(), minutesTo(CHECK_AT));
 const extraEstimate  = () => addMin(homeStart(), minutesTo(EXTRA_AT));
 
@@ -596,16 +639,16 @@ function buildDays(){
   const day = [
     { id:'e1', t:'起きたら', title:'水かお茶をしっかり飲む', dt:'排便をうながします' },
     { id:'e2', t:'朝', title:'朝食は食べない', ng:true },
-    { id:'e3', t:`${CONFIG.bpMedBy}まで`, title:'血圧の薬を飲んでいる方は飲む' },
     { id:'e4', t:'朝', title:'糖尿病の薬・インスリンは使わない', dt:'それ以外の薬は医師に相談してください', ng:true },
+    { id:'e3', t:`${CONFIG.bpMedBy}まで`, title:'血圧の薬を飲んでいる方は飲む' },
   ];
   if(home){
     day.push({ id:'e4b', t:'飲む前', title:'モビプレップを作る', go:'vPrep', goLabel:'作り方を見る' });
     day.push({ id:'e4c', t:'飲む前', title:'モビプレップの飲み方と注意事項を確認する', gos:[{ go:'vRule', label:'飲み方のきまりを見る' }, { go:'vCaution', label:'服用時の注意点を見る' }] });
     day.push({ id:'e5', t:homeStart(), title:'実際にモビプレップを飲み始める', dt:`飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, key:true, go:'vNav', goLabel:'飲み方ナビを開く' });
-    day.push({ id:'e6', t:CONFIG.home.arrive, title:'来院する', key:true });
+    day.push({ id:'e6', t:homeArrive(), title:'来院する', dt: S.examTime ? `検査は${S.examTime}からです` : '', key:true });
   }else{
-    day.push({ id:'e6', t:CONFIG.clinic.arrive, title:'来院する', dt:'モビプレップは院内で、看護師の案内に沿って飲みます', key:true });
+    day.push({ id:'e6', t:CONFIG.clinic.arrive, title:'来院する', dt:'モビプレップは院内で、看護師の案内に沿って飲みます' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), key:true });
   }
   day.push({ id:'e7', t:'持ち物', title:'忘れ物はありませんか', steps:['保険証','お薬手帳','検査説明用紙・同意書・予約票','500mLの水かお茶','汚れたとき用の下着やズボン'] });
   day.push({ id:'e8', t:'服装', title:'アクセサリーなど貴金属は外してくる', dt:'ジェルネイルは落とさなくて大丈夫です' });
@@ -931,7 +974,7 @@ function lastWaterHTML(){
 }
 // すべて終了
 function doneHTML(){
-  const arrive = S.place === 'home' ? `<p><b>${CONFIG.home.arrive}</b> に来院してください。</p>` : `<p>看護師に声をかけてください。</p>`;
+  const arrive = S.place === 'home' ? `<p><b>${homeArrive()}</b> に来院してください。</p>` : `<p>看護師に声をかけてください。</p>`;
   return `<div class="stage ok"><div class="mark">✓</div><b>下剤はこれで終わりです。おつかれさまでした。</b></div>`
     + `<div class="donebox">${arrive}<p style="margin:0">来院したら、この画面の「トイレの記録」を看護師に見せてください。</p></div>`
     + undoClearBtn();
@@ -1240,6 +1283,7 @@ document.addEventListener('click', e => {
 document.getElementById('ov').addEventListener('click', e => { if(e.target.id === 'ov') closeSheet(); });
 document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'hidden'){ syncNow(); return; }
+  refreshSched();
   // ほかの画面から戻ってきたとき：時間を計算し直して表示する
   if(current === 'vNav'){ wakeLock = null; if(S.drinks.length) keepAwake(); renderNav(); }
 });
@@ -1254,8 +1298,10 @@ document.addEventListener('visibilitychange', () => {
   if(DEMO){ document.getElementById('demo').classList.remove('hidden'); }
   load();
   const qc = DEMO ? '' : (q.get('c') || '').toUpperCase();   // お試し版では番号を使わない
+  let sched = null, schedChanged = false;
   if(/^[A-Z0-9]{3,8}$/.test(qc)){
-    const remote = await fetchPatient(qc);
+    const r = await fetchPatient(qc), remote = r && r.state;
+    sched = r && r.sched;
     if(qc !== S.code){
       // 別の患者さん（または初めて）：番号の記録があれば取り出し、なければ新しく始める
       S = Object.assign(blankState(), remote || {}); S.code = qc;
@@ -1264,16 +1310,26 @@ document.addEventListener('visibilitychange', () => {
     }
     try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
   }
-  const qd = q.get('d'), qp = q.get('p'), qh = q.get('h');
-  if(qd && /^\d{4}-\d{2}-\d{2}$/.test(qd) && (qp === 'home' || qp === 'clinic')){
+  // QRコードから開いたのでないとき（ホーム画面やブックマークから）は、待たずに表示して、あとで予約変更を確かめる
+  const qd = q.get('d'), qp = q.get('p'), qh = q.get('h'), qt = normTime(q.get('t'));
+  const hasSched = !!(sched && /^\d{4}-\d{2}-\d{2}$/.test(sched.date || '')) || (S.schedAt > 0);
+  if(hasSched){
+    // 院内で予約が変わったときの予定（QRコードの内容より新しい）を優先する
+    const before = qd ? { d:qd, t:qt } : null;   // 手元のQRコードに書かれた予定
+    schedChanged = applySched(sched);
+    // 初めて開いた人でも、手元のQRコードの日付・時間と違えば知らせる
+    if(!schedChanged && before && S.date && (before.d !== S.date || (before.t && before.t !== S.examTime)) && !S.schedSeen){ schedChanged = true; }
+    if(schedChanged) S.schedSeen = S.schedAt;
+    save();
+  }else if(qd && /^\d{4}-\d{2}-\d{2}$/.test(qd) && (qp === 'home' || qp === 'clinic')){
     const mth = (qh && (CONFIG.methods[qh] || qh === 'standard')) ? qh : CONFIG.method;
     if(qd !== S.date || mth !== curMethod()){ S.checks = {}; S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
-    S.date = qd; S.place = qp; S.method = mth; save();
+    S.date = qd; S.place = qp; S.method = mth; S.examTime = qt; save();
   }else if(qd && /^\d{4}-\d{2}-\d{2}$/.test(qd)){
     // 検査日と飲み方だけのQRコード（内視鏡カレンダーで「院内／自宅」が未選択のとき）：飲む場所は患者さんが最初の画面で選ぶ
     const mth = (qh && (CONFIG.methods[qh] || qh === 'standard')) ? qh : CONFIG.method;
     if(qd !== S.date || mth !== curMethod()){ S.checks = {}; S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
-    S.date = qd; S.method = mth; save();
+    S.date = qd; S.method = mth; S.examTime = qt; save();
   }else if(qh && (CONFIG.methods[qh] || qh === 'standard')){
     // 飲み方だけを指定したQRコード：検査日・飲む場所は患者さんが最初の画面で選ぶ
     if(qh !== curMethod()){ S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
@@ -1283,6 +1339,9 @@ document.addEventListener('visibilitychange', () => {
   if(S.code) scheduleSync();
   if(!S.date || !S.place) return resetTo('vSetup');
   resetTo(fromHash());
+  if(schedChanged) schedNotice();
+  else if(!/^[A-Z0-9]{3,8}$/.test(qc) && S.code) refreshSched();
+  setInterval(() => { if(document.visibilityState === 'visible') refreshSched(); }, 5*60*1000);
   try{ history.scrollRestoration = 'manual'; }catch(e){}
 
 })();
