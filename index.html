@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.4.1（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.46（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -86,11 +86,16 @@ details.guide .gbody{padding:0 16px 16px}
 .gos .go{margin-top:0}
 .daytabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 52px);z-index:4;background:var(--bg);padding:6px 0}
 .daytabs button{position:relative;border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 2px 8px;line-height:1.3;display:flex;flex-direction:column;align-items:center;gap:2px}
-.daytabs button b{font-size:16px;white-space:nowrap}
-.daytabs button small{white-space:nowrap}
-.daytabs button small{font-size:12px;color:var(--sub);letter-spacing:-.02em}
-.daytabs button[aria-selected="true"]{background:var(--deep);border-color:var(--deep);color:var(--onDeep)}
-.daytabs button[aria-selected="true"] small{color:var(--onDeep);opacity:.85}
+.daytabs button b{font-size:min(15px,3.6vw);white-space:nowrap;letter-spacing:-.03em}   /* β1.6.42：「検査当日」が狭いスマホでも収まるように */
+.daytabs button .dd{font-size:21px;font-weight:700;line-height:1.1;white-space:nowrap;letter-spacing:-.02em}
+.daytabs button small{font-size:12px;color:var(--sub);white-space:nowrap}
+.daytabs{align-items:end}
+.daytabs button{min-height:86px;justify-content:center}
+.daytabs button[aria-selected="true"]{min-height:104px}
+.daytabs button[aria-selected="true"]{background:var(--deep);border-color:var(--deep);color:var(--onDeep);padding:14px 2px 10px;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.daytabs button[aria-selected="true"] b{font-size:min(19px,5vw)}
+.daytabs button[aria-selected="true"] .dd{font-size:30px}
+.daytabs button[aria-selected="true"] small{color:var(--onDeep);opacity:.9;font-size:14px}
 .daytabs .tdy{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--amber);color:#fff;font-style:normal;font-size:11px;font-weight:700;border-radius:999px;padding:0 8px;line-height:18px;white-space:nowrap}
 .daynav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
 .daynav .btn{font-size:17px;padding:12px 8px}
@@ -128,6 +133,11 @@ details.guide .gbody{padding:0 16px 16px}
 .slog li:first-child{border-top:0}
 .slog li span{width:52px;color:var(--sub)}
 .slog li i{width:28px;height:20px;border-radius:4px;border:1px solid var(--line)}
+.slog li b{font-weight:400}
+.slog li.del{color:var(--sub)}
+.slog li.del b, .slog li.del span{text-decoration:line-through}
+.slog li.del i{opacity:.4}
+.slog li.del small{font-size:13px;border:1px solid var(--line);border-radius:4px;padding:0 5px}
 .chkpt{text-align:center;font-weight:700;font-size:15px;color:var(--amber);margin:6px 0}
 .chkpt.ok{color:var(--ok)}
 .stage{display:flex;align-items:center;gap:12px;border-radius:12px;padding:12px 14px;margin:10px 0;font-size:18px;line-height:1.5;background:var(--sky)}
@@ -139,6 +149,8 @@ details.guide .gbody{padding:0 16px 16px}
 .pick span{width:44px;height:30px;border-radius:6px;border:1px solid var(--line)}
 .say{font-size:19px;line-height:1.7}
 .donebox{background:var(--surface);border:2px solid var(--ok);border-radius:12px;padding:12px 14px;font-size:18px}
+.donebox .arr{margin:0;text-align:center;font-size:24px;font-weight:700;line-height:1.5}
+.donebox .arr b{display:block;font-size:42px;line-height:1.2;color:var(--deep)}
 .guidebtns{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:14px}
 .guidebtns button{background:var(--surface);border:2px solid var(--deep);border-radius:12px;padding:10px 4px;font-size:22px;line-height:1.3;display:flex;flex-direction:column;align-items:center;gap:4px}
 .guidebtns button span{font-size:15px;font-weight:700;color:var(--deep)}
@@ -216,8 +228,28 @@ p{margin:0 0 10px}
 .day{margin-bottom:22px}
 .dayhead{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;flex-wrap:wrap}
 .dayhead .when{font-size:21px;font-weight:700}
-.dayhead .tag{font-size:14px;background:var(--sky);border-radius:999px;padding:1px 10px}
-.dayhead .today{background:var(--amber);color:#fff}
+.dayhead .tag{font-size:21px;font-weight:700;background:var(--sky);border-radius:999px;padding:2px 14px}   /* β1.6.39：日付を大きく（見出しと同じ大きさ） */
+.dayhead .today{background:var(--amber);color:#fff;font-size:16px}
+.prebtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--amber-soft);border:2px solid var(--amber);border-radius:14px;padding:12px 14px;margin:0 0 14px;color:var(--ink);font-size:16px}
+.prebtn b{display:block;font-size:18px}
+.prebtn small{display:block;font-size:14px;color:var(--sub)}
+.prebtn .pi{flex:none;width:32px;height:32px;border-radius:50%;background:var(--amber);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:18px}
+.prebtn .pa{margin-left:auto;font-size:24px;color:var(--amber)}
+.prebtn.ok{background:var(--ok-soft);border-color:var(--ok)}
+.prebtn.ok .pi{background:var(--ok)}
+.prebtn.ok .pa{color:var(--ok)}
+.flow{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:10px}
+.flow .fh{background:var(--deep);color:var(--onDeep);font-weight:700;padding:6px 12px}
+.flow .fl{display:grid;grid-template-columns:76px 1fr;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.flow .fh + .fl{border-top:0}
+.flow .fl.key{background:var(--amber-soft)}
+.flow .ft{font-weight:700;color:var(--deep)}
+.flow .dt{font-size:15px;color:var(--sub);margin-top:2px}
+.flow .ttl{font-weight:700}
+#vBefore .btabs{position:static;margin-bottom:14px}
+#vBefore .btabs button{padding:12px 2px}
+#vBefore .gos{display:flex;flex-wrap:wrap;gap:8px}
+#vBefore .go{display:inline-block;background:var(--deep);color:var(--onDeep);border:0;border-radius:999px;padding:6px 16px;font-size:15px}
 .timeline{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .item{display:grid;grid-template-columns:76px 1fr 40px;gap:8px;padding:12px 12px;border-top:1px solid var(--line);align-items:start}
 .item:first-child{border-top:0}
@@ -227,6 +259,41 @@ p{margin:0 0 10px}
 .item .dt{font-size:16px;color:var(--sub);margin-top:2px}
 .item ol{margin:4px 0 0;padding-left:1.3em;font-size:16px}
 .item.key{background:var(--amber-soft)}
+.sv .svq{font-weight:700;font-size:18px;margin-bottom:8px}
+.sv .svo{display:block;width:100%;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:8px;font-size:17px;color:var(--ink)}
+.sv .svo[aria-pressed="true"]{border-color:var(--deep);background:var(--sky);font-weight:700}
+.sv .svo[aria-pressed="true"]::before{content:'✓ ';color:var(--deep)}
+#btnSurveySend:disabled{opacity:.5}
+.endbox h2{margin-top:0}
+#vEnded .item{grid-template-columns:76px 1fr}
+.backtoday{margin:-4px 0 14px;background:var(--amber);border-color:var(--amber);line-height:1.3}
+.backtoday small{display:block;font-size:15px;font-weight:700}
+.backtoday b{display:block;font-size:20px}
+.practice{background:#EDE7F6;border:2px solid #7E57C2;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:16px}
+.practice b{color:#5E35B1}
+.practice .linkbtn{display:block;margin-top:6px}
+.consent p{margin:0 0 10px}
+.consent .demonote{background:var(--amber-soft);border-radius:8px;padding:6px 10px;font-weight:700}
+.consent .list{margin:0 0 10px}
+#vConsent .btn + .btn{margin-top:10px}
+.item .itel{margin-top:8px}
+.item .itel .tel{margin:0;font-size:20px;padding:8px 10px;white-space:nowrap}
+.item.wide{grid-template-columns:1fr;text-align:center}   /* β1.6.20〜：時刻の欄を使わず、文章で書く項目（β1.6.22：真ん中ぞろえ・チェックなし） */
+.item.wide .ttl{font-size:20px}
+.timeline:empty{display:none}
+.bigwrap{margin:22px 0}
+.bigbtn{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,#E8891A,#C9620C);color:#fff;border-radius:16px;padding:18px 16px;cursor:pointer;box-shadow:0 4px 0 #8F4508}
+.bigbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #8F4508}
+.bigbtn .bt{font-size:24px;font-weight:700;line-height:1.1}
+.bigbtn .bttl{font-size:20px;font-weight:700;line-height:1.4}
+.bigbtn .bdt{font-size:14px;margin-top:4px;opacity:.95}
+.bigbtn .bhint{grid-column:1 / -1;text-align:center}
+.bigbtn .bhint small{display:block;margin-top:6px;font-size:14px;font-weight:700;opacity:.95}
+.bigbtn .bhint span{display:inline-block;font-size:15px;font-weight:700;border:1.5px solid rgba(255,255,255,.85);border-radius:999px;padding:4px 16px}
+@keyframes bigpulse{0%,100%{box-shadow:0 4px 0 #8F4508,0 0 0 0 rgba(232,137,26,.55)}50%{box-shadow:0 4px 0 #8F4508,0 0 0 10px rgba(232,137,26,0)}}
+.bigbtn{animation:bigpulse 2.2s ease-in-out infinite}
+.bigbtn:active{animation:none}
+@media (prefers-reduced-motion: reduce){.bigbtn{animation:none}}
 .item.ng .ttl{color:var(--ng)}
 .item .go{margin-top:8px;display:inline-block;background:var(--deep);color:var(--onDeep);border:0;border-radius:999px;padding:4px 14px;font-size:15px}
 .chk{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--surface);font-size:18px;line-height:1;color:transparent}
@@ -252,6 +319,12 @@ p{margin:0 0 10px}
 .meter .bar i{display:block;height:100%;border-radius:999px;transition:width .4s}
 .next{text-align:center;padding:20px 14px}
 .next .what{font-size:17px;color:var(--sub)}
+.next .slowsay{font-size:19px;font-weight:700;color:var(--deep);margin:6px 0 2px}
+.inlink{background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--deep);text-decoration:underline;cursor:pointer}
+#stoolLog{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 64px)}
+.howto{background:var(--sky);border-radius:12px;padding:10px 14px;font-size:16px;margin-bottom:14px}
+.howto summary{font-weight:700;cursor:pointer;color:var(--deep)}
+.howto[open] summary{margin-bottom:6px}
 .next .big{font-size:26px;font-weight:700;margin:2px 0 6px;line-height:1.4}
 .cupbig .liq{transform-box:fill-box;transform-origin:50% 100%}
 .cupbig .liq.drain{animation-name:drain;animation-timing-function:linear;animation-fill-mode:forwards}
@@ -337,6 +410,11 @@ p{margin:0 0 10px}
   <section id="vPrep" class="hidden"></section>
   <section id="vRule" class="hidden"></section>
   <section id="vCaution" class="hidden"></section>
+  <section id="vCancel" class="hidden"></section>
+  <section id="vBefore" class="hidden"></section>
+  <section id="vConsent" class="hidden"></section>
+  <section id="vSurvey" class="hidden"></section>
+  <section id="vEnded" class="hidden"></section>
 </main>
 
 <div class="overlay hidden" id="ov"><div class="sheet" id="sheet"></div></div>
@@ -349,7 +427,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.4.1';   // 設定用アプリ・GASと同じ版数
+const APP_VERSION = 'β1.6.46';   // β1.6.46：「今やること」の表示（β1.6.43〜1.6.45）はなし。中身はβ1.6.42と同じ   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -393,7 +471,8 @@ const DEFAULT_CONFIG = {
   okDrinks: ['水（ミネラルウォーターも可）','お茶（煎茶・麦茶・ウーロン茶など）','紅茶（砂糖・ミルクなし）'],
   ngDrinks: ['スポーツドリンク','乳製品（牛乳・飲むヨーグルトなど）','ジュース','アルコール','砂糖や粒などが入った飲み物'],
   thirstRule: 'のどが渇いたら、決められた量とは別に水やお茶を飲んでかまいません。ご高齢の方や脱水に注意が必要な方は、積極的に飲みましょう。',
-  beforeRule: '前回の排便が2日以上前（便秘）、または下痢が続いている場合は、モビプレップを飲む前に当院へ連絡してください。',
+  beforeRule: '前回の排便が2日以上前（便秘）、または下痢が続いている場合は、モビプレップを飲む前に当院へ連絡してください。',   // 服用時の注意点のページ
+  beforeCheck: '前回の排便が2日以上前（便秘）、または下痢が続いている場合は、前日のピコスルファートやセンノシド、当日のモビプレップを飲む前に当院へ連絡してください。',   // 前日のチェック項目（β1.6.0〜）
   halfRule: 'モビプレップを半分（約1L）飲んだところで、便が出たかどうかを確認します。便が出ていない場合は、飲むのをやめて当院へ連絡してください。',
   prepWhen: '当日の朝、飲み始める前に作ります。',
   prepSteps: [
@@ -434,7 +513,7 @@ const DEFAULT_CONFIG = {
     }
   },
 
-  sedation: true                   // 鎮静剤を使う場合の注意を出す
+  sedation: true                   // 鎮静剤・鎮痛剤を使う場合の注意を出す
 };
 // 初期値に、スプレッドシートの設定を重ねる
 function mergeCfg(base, over){
@@ -466,13 +545,23 @@ async function loadRemoteConfig(){
 // お試し版（院内で説明するとき、患者さん自身のスマホで触ってもらう）：本番とは別の場所に保存し、病院へは送らない
 const DEMO = new URLSearchParams(location.search).get('demo') === '1';
 const KEY = DEMO ? 'csguide_demo_v1' : 'csguide_state_v1';
-const blankState = () => ({ date:'', examTime:'', schedAt:0, place:'', checks:{}, drinks:[], stools:[], nextAt:0, stopMobi:false, allDone:false, checkDone:false, noStool:false, callAck:false, curDone:false, baseOK:false, baseCall:'', extraCall:false, extraAck:false, lastWaterInProg:false, code:'', method:'', updatedAt:0 });
+const blankState = () => ({ date:'', examTime:'', schedAt:0, cancelled:false, place:'', checks:{}, drinks:[], stools:[], delStools:[], nextAt:0, stopMobi:false, allDone:false, checkDone:false, noStool:false, callAck:false, curDone:false, baseOK:false, baseCall:'', extraCall:false, extraAck:false, lastWaterInProg:false, code:'', method:'', updatedAt:0 });
 let S = blankState();
 function load(){ try{ const v = localStorage.getItem(KEY); if(v) S = Object.assign(S, JSON.parse(v)); }catch(e){} }
-function save(){ S.updatedAt = Date.now(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} scheduleSync(); }
+function save(){ if(PRACTICE) return;   // β1.6.35：練習のときは保存も送信もしない
+  S.updatedAt = Date.now(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} scheduleSync(); }
 // 患者さんの記録をスタッフ用に送る（番号付きのQRコードで開いたときだけ。名前などは送らない）
 let syncTimer = null;
-function scheduleSync(){ if(DEMO || !SETTINGS_URL || !S.code) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, 800); }
+// β1.6.26：記録を当院へ送るのは、記録の取り扱いに同意した人だけ
+// β1.6.33：検査日の翌日からは「検査のあと」の画面だけ（過ごし方・連絡先はずっと、アンケートは検査日から7日まで）
+const SURVEY_DAYS = 7;
+const ymdOf = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+const isEnded = () => !DEMO && !S.cancelled && /^\d{4}-\d{2}-\d{2}$/.test(S.date || '') && ymdOf(new Date()) > S.date;
+const surveyUntil = () => ymdOf(addD(parseD(S.date), SURVEY_DAYS));
+const surveyOpen = () => !isEnded() || ymdOf(new Date()) <= surveyUntil();
+const consentOK = () => S.consent === true;
+const needConsent = () => (DEMO || !!S.code) && S.consent !== true && S.consent !== false && !isEnded();   // β1.6.27：お試し版でも同意の画面を出す（お試し版は何も送らない）
+function scheduleSync(){ if(DEMO || !SETTINGS_URL || !S.code || !consentOK() || isEnded()) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, 800); }
 function stageText(){
   const i = S.drinks.length;
   if(S.allDone) return '終了';
@@ -491,11 +580,12 @@ function summaryForStaff(){
   return { date:S.date, examTime:S.examTime || '', schedAt:S.schedAt || 0, place:S.place, method:methodLabel(),
     mobiCups:done.filter(x=>x.kind==='m').length, waterCups:done.filter(x=>x.kind==='w').length,
     mobiMl:t.m, waterMl:t.w, stools:S.stools.map(x=>x.lv), stoolTimes:S.stools.map(x=>x.t),
+    delStools:(S.delStools || []).map(x=>x.lv), delStoolTimes:(S.delStools || []).map(x=>x.t),
     lastLv:last ? last.lv : 0, lastStoolAt:last ? last.t : 0,
-    startedAt:S.drinks[0] || 0, lastDrinkAt:S.drinks[i-1] || 0, stage:stageText() };
+    startedAt:S.drinks[0] || 0, lastDrinkAt:S.drinks[i-1] || 0, cancelled:!!S.cancelled, stage: S.cancelled ? '予約取り消し（アプリで案内済み）' : stageText() };
 }
 function syncNow(){
-  if(DEMO || !SETTINGS_URL || !S.code) return;
+  if(DEMO || !SETTINGS_URL || !S.code || !consentOK() || isEnded()) return;
   clearTimeout(syncTimer);
   let summary = {}; try{ summary = summaryForStaff(); }catch(e){}
   const st = Object.assign({}, S); delete st._pick;
@@ -520,14 +610,22 @@ const normTime = t => { const m = /^(\d{1,2}):?(\d{2})$/.exec(String(t || '').tr
 function applySched(sc){
   if(!sc || !/^\d{4}-\d{2}-\d{2}$/.test(sc.date || '')) return false;
   if((sc.at || 0) <= (S.schedAt || 0)) return false;            // もう当てはめた予定
+  if(sc.cancelled){                                               // 院内で予約が取り消された
+    const was = !!S.cancelled;
+    S.cancelled = true; S.schedAt = sc.at || Date.now(); if(!S.date){ S.date = sc.date; S.examTime = normTime(sc.time); }
+    return !was;
+  }
+  const wasCancelled = !!S.cancelled; S.cancelled = false;        // 取り消しが元に戻された
   const time = normTime(sc.time), place = (sc.place === 'home' || sc.place === 'clinic') ? sc.place : S.place;
   const mth = (sc.method && (CONFIG.methods[sc.method] || sc.method === 'standard')) ? sc.method : curMethod();
-  const changed = !!S.date && (sc.date !== S.date || time !== (S.examTime || '') || place !== S.place || mth !== curMethod());
+  const changed = wasCancelled || (!!S.date && (sc.date !== S.date || time !== (S.examTime || '') || place !== S.place || mth !== curMethod()));
   if(sc.date !== S.date || mth !== curMethod()){ RESET_PROGRESS(); }
   S.date = sc.date; S.examTime = time; S.place = place; S.method = mth; S.schedAt = sc.at || Date.now();
   return changed;
 }
-function RESET_PROGRESS(){ S.checks = {}; S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
+// β1.6.12：トイレの記録を消したときは、消さずに「取り消し」として残す（取り消し線で表示）
+function delStool(x){ if(!x) return; if(!Array.isArray(S.delStools)) S.delStools = []; S.delStools.push({ lv:x.lv, t:x.t, del:Date.now() }); }
+function RESET_PROGRESS(){ S.checks = {}; S.drinks = []; S.stools = []; S.delStools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
 function schedNotice(){
   const sh = document.getElementById('sheet');
   const t = S.examTime ? `　検査 ${S.examTime}` : '';
@@ -540,10 +638,23 @@ function schedNotice(){
 }
 // アプリを開いているときにも、院内で予定が変わっていないか確かめる
 async function refreshSched(){
-  if(DEMO || !S.code) return;
+  if(DEMO || PRACTICE || !S.code) return;
   const r = await fetchPatient(S.code);
-  if(r && r.sched && applySched(r.sched)){ S.schedSeen = S.schedAt; save(); rebuild(); selDay = null; resetTo(S.date && S.place ? (current === 'vSetup' ? 'vSchedule' : current) : 'vSetup'); schedNotice(); }
+  if(r && r.sched && applySched(r.sched)){
+    S.schedSeen = S.schedAt; save(); rebuild(); selDay = null; closeSheet();
+    if(S.cancelled) return resetTo('vCancel');
+    resetTo(S.date && S.place ? (['vSetup','vCancel'].includes(current) ? 'vSchedule' : current) : 'vSetup'); schedNotice();
+  }
   else if(r && r.sched && (r.sched.at || 0) <= (S.schedAt || 0)){ /* 変わりなし */ }
+}
+
+// 予約が取り消されたときの画面（予定・飲み方ナビは出さない）
+function renderCancel(){
+  const when = S.date ? `${fmtD(parseD(S.date))}${S.examTime ? ' ' + S.examTime : ''}` : '';
+  document.getElementById('vCancel').innerHTML = `<div class="panel" style="border-color:var(--ng)"><h2 style="color:var(--ng);margin-top:0">この検査の予約は取り消されています</h2>`
+    + (when ? `<p>もとの予約：<b>${esc(when)}</b></p>` : '')
+    + `<p><b>下剤は飲まずに</b>、当院へお電話でご確認ください。</p>`
+    + `<a class="tel" href="tel:${esc(CONFIG.phone.replace(/[^\d]/g,''))}">📞 ${esc(CONFIG.phone)}</a></div>`;
 }
 
 /* ---------- 日付・時刻 ---------- */
@@ -630,36 +741,33 @@ function buildDays(){
   const prev = [
     { id:'d1', t:'朝・昼', title:'消化の良いものを食べる', go:'vFood' },
     { id:'d2', t:CONFIG.dinnerBy, title:'夕食はここまでに済ませる', dt:'このあとは検査が終わるまで食べられません。水・お茶は飲めます', key:true },
-    { id:'d1b', t:'確認', title:'便秘や下痢が続いていませんか', dt:CONFIG.beforeRule, ng:true, go:'vCaution', goLabel:'服用時の注意点を見る' },
-    { id:'d1c', t:'前日中', title:'明日の下剤の飲み方を確認しておく', go:'vRule', goLabel:'飲み方のきまりを見る' },
   ];
   CONFIG.prevDayMeds.forEach((m,i) => prev.push({ id:'d3'+i, t:m.time, title:m.title, steps:m.steps, key:true }));
-  days.push({ key:'prev', tab:'前日', label:fmtD(addD(D,-1)), tag:'検査前日', date:addD(D,-1), items:prev });
+  days.push({ key:'prev', tab:'検査前日', label:fmtD(addD(D,-1)), tag:'検査前日', date:addD(D,-1), items:prev });
 
   const day = [
     { id:'e1', t:'起きたら', title:'水かお茶をしっかり飲む', dt:'排便をうながします' },
     { id:'e2', t:'朝', title:'朝食は食べない', ng:true },
-    { id:'e4', t:'朝', title:'糖尿病の薬・インスリンは使わない', dt:'それ以外の薬は医師に相談してください', ng:true },
-    { id:'e3', t:`${CONFIG.bpMedBy}まで`, title:'血圧の薬を飲んでいる方は飲む' },
+    { id:'e4', t:'朝', title:'糖尿病の薬・インスリンは使わない', ng:true },
+    { id:'e3', t:`${CONFIG.bpMedBy}まで`, title:'血圧の薬を飲んでいる方は飲む', dt:'それ以外の薬は医師の指示に従ってください' },
   ];
   if(home){
     day.push({ id:'e4b', t:'飲む前', title:'モビプレップを作る', go:'vPrep', goLabel:'作り方を見る' });
     day.push({ id:'e4c', t:'飲む前', title:'モビプレップの飲み方と注意事項を確認する', gos:[{ go:'vRule', label:'飲み方のきまりを見る' }, { go:'vCaution', label:'服用時の注意点を見る' }] });
-    day.push({ id:'e5', t:homeStart(), title:'実際にモビプレップを飲み始める', dt:`飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, key:true, go:'vNav', goLabel:'飲み方ナビを開く' });
-    day.push({ id:'e6', t:homeArrive(), title:'来院する', dt: S.examTime ? `検査は${S.examTime}からです` : '', key:true });
+    day.push({ id:'e5', t:homeStart(), title:'実際にモビプレップを飲み始めましょう', dt:`飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, key:true, big:true, go:'vNav', goLabel:'飲み始める' });
+    day.push({ id:'e6', t:'', wide:true, title:`${homeArrive()}に来院してください`, dt: S.examTime ? `検査は${S.examTime}からです` : '', key:true });
   }else{
-    day.push({ id:'e6', t:CONFIG.clinic.arrive, title:'来院する', dt:'モビプレップは院内で、看護師の案内に沿って飲みます' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), key:true });
+    day.push({ id:'e6', t:'', wide:true, title:`${CONFIG.clinic.arrive}に来院してください`, dt:'モビプレップは院内で、看護師の案内に沿って飲みます' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), key:true });
   }
   day.push({ id:'e7', t:'持ち物', title:'忘れ物はありませんか', steps:['保険証','お薬手帳','検査説明用紙・同意書・予約票','500mLの水かお茶','汚れたとき用の下着やズボン'] });
   day.push({ id:'e8', t:'服装', title:'アクセサリーなど貴金属は外してくる', dt:'ジェルネイルは落とさなくて大丈夫です' });
-  if(CONFIG.sedation) day.push({ id:'e9', t:'鎮静剤', title:'鎮静剤を使う方は、車・バイク・自転車で来ない', ng:true, dt:'検査後30分〜1時間ほど休んでから帰れますが、当日は運転は出来ません。' });
-  day.push({ id:'e10', t:'検査前', title:'看護師に便の回数と色を伝える', go:'vNav', goLabel:'記録を見る' });
-  days.push({ key:'day', tab:'当日', label:fmtD(D), tag:'検査当日', date:D, items:day });
+  if(CONFIG.sedation) day.push({ id:'e9', t:'運転', title:'鎮静剤・鎮痛剤を使う方は、車・バイク・自転車で来ない', ng:true, dt:'検査後30分〜1時間ほど休んでから帰れますが、当日は運転は出来ません。' });
+  days.push({ key:'day', tab:'検査当日', label:fmtD(D), tag:'検査当日', date:D, items:day });
   days.push({ key:'after', tab:'検査後', label:'', tag:'検査のあと', items:[
     { id:'a1', t:'帰宅後', title:'検査後の過ごし方', go:'vAfter' },
-    { id:'a2', t:'ポリープ', title:'ポリープを取った方の注意', go:'vAfter' },
-    { id:'a3', t:'困ったら', title:'お腹の痛みが続く・赤い便が出るときは連絡', go:'vAfter', goLabel:'連絡先を見る' },
-    { id:'a4', t:'質問', title:'よくある質問', go:'vAfter' }
+    { id:'a3', t:'困ったら', title:'お腹の痛みが続く・赤い便が出るときは連絡', tel:true },   // β1.6.24：電話番号をここに出す（よくある質問はなし）
+    S.surveyDone ? { id:'a9', t:'アンケート', title:'アンケートへのご協力、ありがとうございました' }
+                 : { id:'a9', t:'アンケート', title:'このアプリのアンケートにご協力ください', dt:'4つの質問に答えるだけです（1分ほど）', go:'vSurvey', goLabel:'答える' }   // β1.6.29
   ]});
   return days;
 }
@@ -682,41 +790,173 @@ function renderSchedule(){
   const idx = days.findIndex(d => d.key === selDay), d = days[idx];
 
   let h = `<div class="panel summary"><div><div class="d">検査日 ${fmtD(parseD(S.date))}</div><div class="p">下剤は${place}・${methodLabel()}</div></div><button type="button" id="btnChange">変更</button></div>`;
+  // β1.6.0：前日までに確認すること（注意事項と下剤の飲み方の流れ）への入口。検査後のタブでは出さない
+  if(selDay !== 'after'){
+    const ok = !!S.checks.preOK;
+    h += `<button type="button" class="prebtn${ok ? ' ok' : ''}" data-go="vBefore"><span class="pi" aria-hidden="true">${ok ? '✓' : '!'}</span><span><b>前日までに確認してください</b><small>${ok ? '確認済みです。もう一度見ることもできます' : '注意事項と、下剤内服の流れ'}</small></span><span class="pa" aria-hidden="true">›</span></button>`;
+  }
 
   // 日付の切り替えボタン
-  h += `<div class="daytabs" role="tablist" style="grid-template-columns:repeat(${days.length},minmax(0,1fr))${days.length > 4 ? ';gap:4px' : ''}">` + days.map(x => {
-    const sub = x.date ? `${x.date.getMonth()+1}/${x.date.getDate()}(${WD[x.date.getDay()]})` : (x.range ? `${x.range[0].getMonth()+1}/${x.range[0].getDate()}〜` : '');
+  // β1.6.41：選んでいるタブは幅を広く・文字を大きく。日付も大きく（曜日は下に小さく）
+  const cols = days.map(x => x.key === selDay ? 'minmax(0,1.6fr)' : 'minmax(0,1fr)').join(' ');
+  h += `<div class="daytabs" role="tablist" style="grid-template-columns:${cols};gap:4px">` + days.map(x => {
+    const md = x.date ? `${x.date.getMonth()+1}/${x.date.getDate()}` : (x.range ? `${x.range[0].getMonth()+1}/${x.range[0].getDate()}〜` : '');
+    const wd = x.date ? `（${WD[x.date.getDay()]}）` : '';
     const tdy = dayIsToday(x, today);
     return `<button type="button" role="tab" data-day="${x.key}" aria-selected="${x.key===selDay}">`
       + (tdy ? `<i class="tdy">今日</i>` : '')
-      + `<b>${esc(x.tab)}</b><small>${esc(sub)}</small></button>`;
+      + `<b>${esc(x.tab)}</b>` + (md ? `<span class="dd">${esc(md)}</span>` : '') + (wd ? `<small>${esc(wd)}</small>` : '') + `</button>`;
   }).join('') + `</div>`;
+  // β1.6.34：今日以外の日を見ているときは「今日の予定に戻る」を出す
+  const todayTab = days.find(x => dayIsToday(x, today));
+  if(todayTab && todayTab.key !== selDay) h += `<button type="button" class="btn backtoday" data-day="${todayTab.key}"><small>これは今日の予定ではありません。</small><b>今日に戻る</b></button>`;
 
   // 選んだ日の予定
-  h += `<div class="day"><div class="dayhead"><span class="when">${esc(d.tag)}</span>`
-    + (d.label ? `<span class="tag">${esc(d.label)}</span>` : '')
-    + (dayIsToday(d, today) ? `<span class="tag today">今日</span>` : '') + `</div><div class="timeline">`;
+  h += `<div class="day"><div class="timeline">`;   // β1.6.41：「検査当日 ○月○日」の見出しはなし（タブに大きく出す）
   d.items.forEach(it => {
     const done = !!S.checks[it.id];
     const soft = !/^\d{1,2}:\d{2}$/.test(it.t);
-    h += `<div class="item${it.key?' key':''}${it.ng?' ng':''}${done?' done':''}">`
-      + `<div class="t${soft?' soft':''}">${esc(it.t)}</div><div>`
+    if(it.big){   // β1.6.14〜：「実際にモビプレップを飲み始める」は、特別な色のボタンだけを出す（β1.6.16：予定の枠の外に出して、上下に間をあける）
+      h += `</div><div class="bigwrap"><div class="bigbtn" role="button" tabindex="0" data-go="${it.go}">`
+        + `<div class="bt">${esc(it.t)}</div><div class="bb"><div class="bttl">${esc(it.title)}</div>`
+        + (it.dt ? `<div class="bdt">${esc(it.dt)}</div>` : '')
+        + `</div><div class="bhint"><span>👆 飲み始めるときに押してください</span>${practiceDay() ? '<small>前日までは、押すとデモ版でお試しできます</small>' : ''}</div>`   // β1.6.36   // β1.6.17〜：押せることが分かるように（β1.6.19：ボタン全体の真ん中に）
+        + `</div></div><div class="timeline">`;   // β1.6.18：右の丸い「›」はなし
+      return;
+    }
+    h += `<div class="item${it.key?' key':''}${it.ng?' ng':''}${it.wide?' wide':''}${done?' done':''}">`
+      + (it.wide ? '' : `<div class="t${soft?' soft':''}">${esc(it.t)}</div>`) + `<div>`
       + `<div class="ttl">${esc(it.title)}</div>`
       + (it.dt ? `<div class="dt">${esc(it.dt)}</div>` : '')
       + (it.steps && it.steps.length ? `<ol>${it.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>` : '')
       + (it.go ? `<button type="button" class="go" data-go="${it.go}">${esc(it.goLabel || '詳しく見る')}</button>` : '')
+      + (it.tel ? `<div class="itel">${telBtn()}</div>` : '')
       + (it.gos ? `<div class="gos">${it.gos.map(g=>`<button type="button" class="go" data-go="${g.go}">${esc(g.label)}</button>`).join('')}</div>` : '')
-      + `</div><button type="button" class="chk" data-chk="${it.id}" aria-pressed="${done}" aria-label="済み">✓</button></div>`;
+      + `</div>` + (it.wide ? '' : `<button type="button" class="chk" data-chk="${it.id}" aria-pressed="${done}" aria-label="済み">✓</button>`) + `</div>`;   // β1.6.22：来院の文はチェックなし
   });
   h += `</div></div>`;
 
-  // 前の日・次の日
+  // 前の日・次の日（β1.6.30：「← 3日前」ではなく「前の日・次の日」）
   const pv = days[idx-1], nx = days[idx+1];
   h += `<div class="daynav">`
-    + (pv ? `<button type="button" class="btn sub" data-day="${pv.key}">← ${esc(pv.tab)}</button>` : `<span></span>`)
-    + (nx ? `<button type="button" class="btn" data-day="${nx.key}">${esc(nx.tab)} →</button>` : `<span></span>`)
+    + (pv ? `<button type="button" class="btn sub" data-day="${pv.key}">← 前の日</button>` : `<span></span>`)
+    + (nx ? `<button type="button" class="btn" data-day="${nx.key}">次の日 →</button>` : `<span></span>`)
     + `</div>`;
+  if(S.code || DEMO) h += `<div style="text-align:center;margin-top:18px"><button type="button" class="linkbtn" data-go="vConsent">記録の送信について（${S.consent === true ? '同意しています' : '同意していません'}）</button></div>`;   // β1.6.26
   v.innerHTML = h;
+}
+
+/* ---------- 記録の取り扱いへの同意（β1.6.26） ---------- */
+let consentNext = null;   // 初めて開いたとき：同意のあとに進む先
+function consentHTML(){
+  const first = needConsent();
+  const now = S.consent === true ? '今は「同意する」になっています。' : S.consent === false ? '今は「同意しない」になっています（記録は当院へ送られていません）。' : '';
+  return `<h2>記録の取り扱いについて</h2>`
+    + `<div class="panel consent">`
+    + `<p>このアプリでは、下剤がうまく効いているかを当院で確かめ、必要なときにご連絡できるように、次の記録を当院へ送ります。</p>`
+    + `<ul class="list"><li>モビプレップと水・お茶を飲んだ杯数と時刻</li><li>トイレの記録（便の色の段階と時刻。取り消した記録も含みます）</li><li>検査日・検査時間・下剤を飲む場所・飲み方</li></ul>`
+    + `<p>送った記録は、当院のスタッフが確認します。</p>`
+    + `<p><b>お名前や患者IDなど、あなたが誰かが分かる情報は送りません。</b></p>`
+    + `<p>記録は「このアプリ用の番号」で管理します。この番号は、お渡しした紙のQRコードの下に印刷されている、英字と数字の6文字（例：${esc(S.code && !DEMO ? S.code : 'K7MQ2X')}）です。今回の検査のために作った番号で、診察券の番号やお名前とは関係がないため、番号だけでは誰の記録か分かりません。</p>`
+    + `<p>記録はGoogleのサービス（スプレッドシート）に保存し、<b>検査の日が終わる（日付が変わる）と、自動で消えます。</b></p>`
+    + `<p>同意しない場合も、このアプリはそのまま使えます。ただし、記録は当院へ送られず、このスマホの中だけに残ります。</p>`
+    + (DEMO ? `<p class="demonote">お試し版では、どちらを選んでも記録は送られません。</p>` : '')
+    + `<p class="muted" style="margin:0">あとから変えるときは、「検査までの予定」の画面のいちばん下にある「記録の送信について」から変えられます。</p>`
+    + `</div>`
+    + (now ? `<p class="muted">${now}</p>` : '')
+    + `<button type="button" class="btn" id="btnConsentYes">同意する</button>`
+    + `<button type="button" class="btn sub" id="btnConsentNo">同意しない（記録を送らない）</button>`
+    + (first ? '' : backBtn());
+}
+function setConsent(ok){
+  const was = S.consent;
+  S.consent = ok; S.consentAt = Date.now(); save();   // 同意したときは、ここで記録が送られる
+  // 同意をやめたとき：これまでに送った記録を、当院の記録から消してもらう
+  if(!ok && was === true && SETTINGS_URL && S.code && !DEMO){
+    try{ fetch(SETTINGS_URL, { method:'POST', keepalive:true, body: JSON.stringify({ action:'withdraw', code:S.code }) }).catch(()=>{}); }catch(e){}
+  }
+  if(consentNext){ const f = consentNext; consentNext = null; return f(); }
+  goBack();
+}
+
+/* ---------- アプリのアンケート（β1.6.29） ----------
+   検査のあとに3つだけ聞く。送るのは答えだけ（β1.6.31〜。β1.6.32〜は飲んだ場所の質問を足して4つ。番号・お名前・アプリ内の記録は送らない）。
+   記録の送信に同意していない人も、自分で「送る」を押したときだけ送る。お試し版は送らない。 */
+const SURVEY = [
+  { id:'q4', q:'下剤（モビプレップ）は、どこで飲みましたか？', o:['自宅','院内'] },   // β1.6.32：どこで使ったか
+  { id:'q1', q:'このアプリは、検査の準備に役に立ちましたか？', o:['とても役に立った','まあまあ役に立った','あまり役に立たなかった'] },
+  { id:'q2', q:'下剤（モビプレップ）の飲み方は、分かりやすかったですか？', o:['分かりやすかった','ふつう','分かりにくかった'] },
+  { id:'q3', q:'次に大腸カメラを受けるときも、このアプリを使いたいですか？', o:['使いたい','どちらでもよい','紙の説明のほうがよい'] }
+];
+let surveyAns = {}, surveyMsg = '';
+function surveyHTML(){
+  if(S.surveyDone) return `<h2>アプリのアンケート</h2><div class="panel"><p style="margin:0">ご協力ありがとうございました。いただいた答えは、今後のアプリづくりの参考にします。</p></div>` + backBtn();
+  const all = SURVEY.every(x => surveyAns[x.id]);
+  return `<h2>アプリのアンケート</h2>`
+    + `<p>今後のアプリづくりの参考にします。個人情報やアプリ内の他のデータは送られません。</p>`
+    + SURVEY.map((x, n) => `<div class="panel sv"><div class="svq">${n+1}. ${esc(x.q)}</div>`
+        + x.o.map((o, k) => `<button type="button" class="svo" data-sv="${x.id}" data-svk="${k}" aria-pressed="${surveyAns[x.id] === o}">${esc(o)}</button>`).join('') + `</div>`).join('')
+    + (surveyMsg ? `<p class="warn">${esc(surveyMsg)}</p>` : '')
+    + `<button type="button" class="btn" id="btnSurveySend"${all ? '' : ' disabled'}>${all ? '送る' : 'すべて選ぶと送れます'}</button>`
+    + backBtn();
+}
+async function sendSurvey(){
+  const answers = {}; SURVEY.forEach(x => { answers[x.id] = surveyAns[x.id] || ''; });
+  if(!DEMO && SETTINGS_URL){
+    try{
+      const r = await fetch(SETTINGS_URL, { method:'POST', body: JSON.stringify({ action:'survey', answers }) }).then(r => r.json());
+      if(!r.ok) throw new Error(r.error || '');
+    }catch(e){ surveyMsg = '送れませんでした。電波のよい所で、もう一度「送る」を押してください。'; return render('vSurvey', true); }
+  }
+  S.surveyDone = true; surveyMsg = ''; save(); render('vSurvey', true);
+}
+
+/* ---------- 検査のあと（検査日の翌日から。β1.6.33） ---------- */
+function endedHTML(){
+  const u = parseD(surveyUntil());
+  let h = `<div class="panel endbox"><h2>検査おつかれさまでした</h2><p style="margin:0">このアプリでの検査の準備のご案内は終わりました。ご利用ありがとうございました。</p></div>`
+    + `<div class="timeline">`
+    + `<div class="item"><div class="t soft">帰宅後</div><div><div class="ttl">検査後の過ごし方</div><button type="button" class="go" data-go="vAfter">詳しく見る</button></div></div>`
+    + `<div class="item"><div class="t soft">困ったら</div><div><div class="ttl">お腹の痛みが続く・赤い便が出るときは連絡</div><div class="itel">${telBtn()}</div></div></div>`;
+  if(surveyOpen()) h += S.surveyDone
+    ? `<div class="item"><div class="t soft">アンケート</div><div><div class="ttl">アンケートへのご協力、ありがとうございました</div></div></div>`
+    : `<div class="item"><div class="t soft">アンケート</div><div><div class="ttl">このアプリのアンケートにご協力ください</div><div class="dt">4つの質問に答えるだけです（${u.getMonth()+1}月${u.getDate()}日まで）</div><button type="button" class="go" data-go="vSurvey">答える</button></div></div>`;
+  return h + `</div>`;
+}
+
+/* ---------- 前日までに確認すること（β1.6.0） ---------- */
+let beforeTab = 'caution';   // β1.6.2：「注意事項」と「下剤内服の流れ」の2つに分ける
+function beforeHTML(){
+  const D = parseD(S.date), prevD = addD(D, -1), home = S.place === 'home', tel = telNo();
+  const row = (t, title, dt, key) => `<div class="fl${key ? ' key' : ''}"><div class="ft">${esc(t)}</div><div><div class="ttl">${esc(title)}</div>${dt ? `<div class="dt">${esc(dt)}</div>` : ''}</div></div>`;
+  let h = `<p>検査の前日までに、次の2つを確認してください。</p>`
+    + `<div class="daytabs btabs" role="tablist" style="grid-template-columns:repeat(2,minmax(0,1fr))">`
+    + [['caution','① 注意事項'],['flow','② 下剤内服の流れ']].map(([k,l]) => `<button type="button" role="tab" data-btab="${k}" aria-selected="${beforeTab === k}"><b>${l}</b></button>`).join('')
+    + `</div>`;
+  if(beforeTab === 'caution'){
+    h += `<div class="caution"><div class="ch">確認</div><b>便秘や下痢が続いていませんか</b>${esc(CONFIG.beforeCheck || CONFIG.beforeRule)}<div class="to">→ 前もって電話</div></div>`
+      + `<a class="tel" href="tel:${tel}">📞 ${esc(CONFIG.phone)}</a>`
+      + `<div class="gos" style="margin-top:14px"><button type="button" class="go" data-go="vCaution">服用時の注意点を見る</button></div>`
+      + `<button type="button" class="btn" data-btab="flow" style="margin-top:20px">次へ：② 下剤内服の流れ →</button>`;
+    return h;
+  }
+  h += `<div class="flow"><div class="fh">前日　${esc(fmtD(prevD))}</div>`
+    + row(CONFIG.dinnerBy, '夕食はここまでに済ませる', 'このあとは検査が終わるまで食べられません。水・お茶は飲めます', true);
+  CONFIG.prevDayMeds.forEach(m => { h += row(m.time, m.title, '', true); });
+  h += `<div class="fh">当日　${esc(fmtD(D))}</div>`;
+  if(home){
+    h += row('飲む前', 'モビプレップを作る', '')
+      + row(homeStart(), 'モビプレップを飲み始める', `${methodLabel()}で飲みます。飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, true)
+      + row(homeArrive(), '来院する', S.examTime ? `検査は${S.examTime}からです` : '', true);
+  }else{
+    h += row(CONFIG.clinic.arrive, '来院する', 'モビプレップは院内で、看護師の案内に沿って飲みます' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), true);
+  }
+  h += `</div><div class="gos">`
+    + `<button type="button" class="go" data-go="vRule">飲み方のきまりを見る</button>`
+    + (home ? `<button type="button" class="go" data-go="vPrep">作り方を見る</button>` : '')
+    + `</div>`
+    + `<button type="button" class="btn" id="btnPreOK" style="margin-top:20px">${S.checks.preOK ? '✓ 確認しました' : '確認しました'}</button>`;
+  return h;
 }
 
 /* ---------- 食事 ---------- */
@@ -842,7 +1082,7 @@ function callHTML(kind){
     + telBtn()
     + `<p class="muted" style="margin-top:12px">当院から「続けて飲む」ように言われたら、下のボタンを押してください。</p>`
     + `<button type="button" class="btn sub" id="btnCallAck">電話で指示を受けたので、続けて飲む</button>`
-    + `<button type="button" class="btn toilet" id="btnToilet">🚽 トイレに行った</button>`;
+    + `<button type="button" class="btn toilet" id="btnToilet">🚽 トイレに行った</button>` + SICK_BTN + ``;
 }
 // 便の色を選ぶ画面（トイレボタン・前半終了時の自動表示）
 function openStoolPicker(mode){
@@ -857,13 +1097,19 @@ function openStoolPicker(mode){
   document.getElementById('ov').classList.remove('hidden');
   document.getElementById('spLater').onclick = closeSheet;
 }
+// β1.6.6：「気分が悪い・お腹が痛いとき」は「トイレに行った」のすぐ下に出す
+const SICK_BTN = `<button type="button" class="btn warn" id="btnSick">気分が悪い・お腹が痛いとき</button>`;
+let navHowOpen = false;   // 「この画面の使い方」を開いているか（画面を描き直しても開いたままにする）
+const slowSay = n => `<div class="slowsay">1杯を${intervalFor(n)}分くらいかけて、ゆっくり飲みましょう</div>`;   // β1.6.4
 function renderNav(){
   const v = document.getElementById('vNav');
   const i = S.drinks.length, st = STEPS[i], t = totals();
   const lastStool = S.stools.length ? S.stools[S.stools.length-1] : null;
   let h = `<h2>当日の飲み方ナビ</h2>`;
+  if(PRACTICE) h += `<div class="practice"><b>デモ版</b>です（今日は検査の当日ではありません）。ここで押した記録は保存されず、当院へも送られません。検査の当日に開くと、本番の記録になります。<button type="button" class="linkbtn" id="btnPracticeReset">デモ版を最初からやり直す</button></div>`;   // β1.6.35
   if(S.place === 'clinic') h += `<div class="note">院内で飲む方は、看護師がご案内します。この画面は便の記録にも使えます。</div>`;
-  else h += `<div class="note">「飲み始める」を押すと、コップの絵の中身が少しずつ減っていきます。絵に合わせてゆっくり飲み、飲み終わったら「飲み終わった」を押してください。動画を見るなど、ほかの画面に切り替えても大丈夫です。戻ってくると、続きから使えます。</div>`;
+  // β1.6.4：使い方の説明は、押すと開くようにしまっておく
+  else h += `<details class="howto" id="navHow"${navHowOpen ? ' open' : ''}><summary>この画面の使い方</summary><div>「飲み始める」を押すと、コップの絵の中身が少しずつ減っていきます。絵に合わせてゆっくり飲み、飲み終わったら「飲み終わった」を押してください。動画を見るなど、ほかの画面に切り替えても大丈夫です。戻ってくると、続きから使えます。</div></details>`;
 
   h += `<div class="panel">` + progressHTML(t, i);
   if(S.allDone) h += doneHTML();
@@ -876,35 +1122,42 @@ function renderNav(){
     const c = i - 1, cs = STEPS[c], dur = intervalFor(i) * 60, el = Math.max(0, (Date.now() - S.drinks[c]) / 1000);
     const endHere = (i === CHECK_AT) || (i === EXTRA_AT) || (i === STEPS.length);
     h += `<div class="next" id="nextBox"><div class="what">いま飲んでいる1杯（${i}杯目）</div>`
+      + (cs.kind === 'm' ? slowSay(i) : '')
       + (cs.kind === 'm' ? cupSVG(cs.kind, cs.ml, { dur, el }) : cupSVG(cs.kind, cs.ml))
       + `<div class="big">${cs.kind==='m'?'モビプレップ':'水かお茶'} ${cs.ml}mL</div>`
       + (cs.kind === 'm'
           ? `<div class="count" id="count"></div><div class="pace" id="pace"></div>`
           : `<div class="pace">飲み終わったら、下のボタンを押してください</div>`)
       + `<button type="button" class="btn" id="btnDone">${endHere ? '飲み終わった' : '飲み終わった（次の1杯へ）'}</button>`
-      + `<button type="button" class="btn toilet" id="btnToilet">🚽 トイレに行った</button></div>`;
+      + `<button type="button" class="btn toilet" id="btnToilet">🚽 トイレに行った</button>` + SICK_BTN + `</div>`;
   }
   else if(st){
     // 次に飲む1杯（コップは満タン）
     h += `<div class="next" id="nextBox"><div class="what">${i===0 ? '1杯目' : `次の1杯（${i+1}杯目）`}</div>`
+      + (st.kind === 'm' ? slowSay(i + 1) : '')
       + cupSVG(st.kind, st.ml)
       + `<div class="big">${st.kind==='m'?'モビプレップ':'水かお茶'} ${st.ml}mL</div>`
       + `<button type="button" class="btn" id="btnDrink">飲み始める</button>`
-      + `<button type="button" class="btn toilet" id="btnToilet">🚽 トイレに行った</button></div>`;
+      + `<button type="button" class="btn toilet" id="btnToilet">🚽 トイレに行った</button>` + SICK_BTN + `</div>`;
   }
   else h += notClearAllHTML();
+  if(!h.includes('id="btnSick"')) h += SICK_BTN;   // トイレのボタンがない場面でも、ここに出す
   h += (i>0 && !S.stopMobi ? `<div style="text-align:center"><button type="button" class="linkbtn" id="btnUndo">押し間違えたので1つ戻す</button></div>` : '')
     + `</div>`;
 
-  h += `<div class="panel"><h3>トイレの記録（${S.stools.length}回）</h3>`
-    + (S.stools.length
-        ? `<ol class="slog">${S.stools.map(x=>`<li><span>${hm(x.t)}</span><i style="background:${STOOL[x.lv-1].c}"></i>${STOOL[x.lv-1].n} ${STOOL[x.lv-1].label}</li>`).join('')}</ol>`
-          + `<button type="button" class="linkbtn" id="btnStoolUndo">最後の記録を消す</button>`
-        : `<p class="muted" style="margin:0">まだ記録はありません。トイレに行ったら「🚽 トイレに行った」を押してください。</p>`)
+  // 消した記録も、取り消し線をつけて時刻順に並べる
+  const allLog = S.stools.map(x => ({ lv:x.lv, t:x.t })).concat((S.delStools || []).map(x => ({ lv:x.lv, t:x.t, d:true }))).sort((a,b) => a.t - b.t);
+  h += `<div class="panel" id="stoolLog"><h3>トイレの記録（${S.stools.length}回）</h3>`
+    + (allLog.length
+        ? `<ol class="slog">${allLog.map(x=>`<li${x.d ? ' class="del"' : ''}><span>${hm(x.t)}</span><i style="background:${STOOL[x.lv-1].c}"></i><b>${STOOL[x.lv-1].n} ${STOOL[x.lv-1].label}</b>${x.d ? '<small>取り消し</small>' : ''}</li>`).join('')}</ol>`
+          + (S.stools.length ? `<button type="button" class="linkbtn" id="btnStoolUndo">最後の記録を消す</button>` : '')
+        : '')
+    + (allLog.length ? '' : `<p class="muted" style="margin:0">まだ記録はありません。トイレに行ったら「🚽 トイレに行った」を押してください。</p>`)
     + `<p class="muted" style="margin-top:8px">④（うすい黄）か⑤（透明）になったら、モビプレップは終わりです。来院したら、この記録を看護師に見せてください。</p></div>`;
 
-  h += `<button type="button" class="btn warn" id="btnSick">気分が悪い・お腹が痛いとき</button>` + backBtn();
+  h += backBtn();
   v.innerHTML = h;
+  const how = document.getElementById('navHow'); if(how) how.addEventListener('toggle', () => { navHowOpen = how.open; });
   startTick();
 }
 const POSTERS = {
@@ -962,7 +1215,7 @@ function cautionHTML(){
     + `<a class="tel" href="tel:${tel}">📞 ${esc(CONFIG.phone)}</a></div>`;
 }
 const telBtn = () => `<a class="tel" href="tel:${esc(CONFIG.phone.replace(/[^\d]/g,''))}">📞 ${esc(CONFIG.phone)}</a>`;
-const undoClearBtn = () => `<div style="text-align:center"><button type="button" class="linkbtn" id="btnUnclear">④・⑤を押し間違えた（記録を取り消す）</button></div>`;
+const undoClearBtn = () => `<div style="text-align:center"><button type="button" class="linkbtn" id="btnUnclear">実はまだ便がきれいになっていない。④・⑤を押し間違えた（記録を取り消す）</button></div>`;
 // 追加分の途中で④⑤になったとき：水・お茶を1杯飲んで終わり
 function lastWaterHTML(){
   const cup = (MP() ? MP().cup : CONFIG.waterCupMl);
@@ -974,9 +1227,9 @@ function lastWaterHTML(){
 }
 // すべて終了
 function doneHTML(){
-  const arrive = S.place === 'home' ? `<p><b>${homeArrive()}</b> に来院してください。</p>` : `<p>看護師に声をかけてください。</p>`;
+  const arrive = S.place === 'home' ? `<p class="arr"><b>${homeArrive()}</b> に来院してください。</p>` : `<p class="arr">看護師に声をかけてください。</p>`;   // β1.6.11：大きく表示
   return `<div class="stage ok"><div class="mark">✓</div><b>下剤はこれで終わりです。おつかれさまでした。</b></div>`
-    + `<div class="donebox">${arrive}<p style="margin:0">来院したら、この画面の「トイレの記録」を看護師に見せてください。</p></div>`
+    + `<div class="donebox">${arrive}</div>`
     + undoClearBtn();
 }
 // 全部飲んでもきれいにならない
@@ -1053,7 +1306,7 @@ async function keepAwake(){
 /* ---------- 検査後・Q&A ---------- */
 function renderAfter(){
   let h = `<h2>検査が終わったら</h2><div class="panel"><ul class="list">`
-    + (CONFIG.sedation ? `<li>鎮静剤を使った方は、30分〜1時間ほど院内で休んでから帰れますが、当日は運転は出来ません。</li>` : '')
+    + (CONFIG.sedation ? `<li>鎮静剤・鎮痛剤を使った方は、30分〜1時間ほど院内で休んでから帰れますが、当日は運転は出来ません。</li>` : '')
     + `<li>食事はできますが、外食などはせずに帰宅し、安静にしてください。</li>`
     + `<li>刺激の強いもの・消化の悪いもの・お酒は避けてください。</li>`
     + `<li>激しい運動や重労働は避けてください。</li>`
@@ -1062,23 +1315,16 @@ function renderAfter(){
     + `<div class="panel"><h3>ポリープを取った方</h3><ul class="list">`
     + `<li>水分は、お腹の張りが楽になってからとってください。</li>`
     + `<li>食事は夕方から、検査前日と同じような食事にしてください。</li>`
-    + `<li>検査日から1週間は、食事の制限・運動・旅行ができません。予定を入れないようにしてください。</li></ul></div>`
-    + `<div class="panel"><h3>こんなときはご連絡ください</h3><p>お腹の痛みが続く、赤い便が出るなど、困ったことがあればお電話ください。</p>`
-    + `<a class="tel" href="tel:${esc(CONFIG.phone.replace(/[^\d]/g,''))}">📞 ${esc(CONFIG.phone)}</a></div>`
-    + `<h2 style="margin-top:24px">よくある質問</h2><div class="panel">`
-    + `<div class="qa"><div class="q">生理と重なっても受けられますか？</div><div>受けられます。ナプキンやタンポンも使えます。</div></div>`
-    + `<div class="qa"><div class="q">前日の夜の下剤で、夜中にお腹が痛くなったり目が覚めたりしませんか？</div><div>ほとんどの方は大丈夫です。効き方には個人差があるので、心配な方はご相談ください。</div></div>`
-    + `<div class="qa"><div class="q">当日の来院時間が変わることはありますか？</div><div>変わる場合があります。また、便の状態によって検査の順番が前後することがあります。</div></div>`
-    + `</div>`;
+    + `<li>検査日から1週間は、食事の制限・運動・旅行ができません。予定を入れないようにしてください。</li></ul></div>`;   // β1.6.25：連絡先は検査後の予定の「困ったら」に出すので、ここには出さない
   document.getElementById('vAfter').innerHTML = h;
 }
 
 const backBtn = () => `<button type="button" class="btn sub bottomback" data-back="1">← もどる</button>`;
 
 /* ---------- 画面切り替え（スマホの「戻る」でも戻れる） ---------- */
-const VIEWS = ['vSetup','vSchedule','vFood','vNav','vAfter','vPrep','vRule','vCaution'];
-const HASH  = { vSetup:'setup', vSchedule:'schedule', vFood:'food', vNav:'drink', vAfter:'after', vPrep:'prep', vRule:'rule', vCaution:'caution' };
-const TITLE = { vSetup:'はじめに', vSchedule:'検査までの予定', vFood:'食事のこと', vNav:'飲み方ナビ', vAfter:'検査のあと', vPrep:'モビプレップの作り方', vRule:'飲み方のきまり', vCaution:'服用時の注意点' };
+const VIEWS = ['vSetup','vSchedule','vFood','vNav','vAfter','vPrep','vRule','vCaution','vCancel','vBefore','vConsent','vSurvey','vEnded'];
+const HASH  = { vSetup:'setup', vSchedule:'schedule', vFood:'food', vNav:'drink', vAfter:'after', vPrep:'prep', vRule:'rule', vCaution:'caution', vCancel:'cancel', vBefore:'before', vConsent:'consent', vSurvey:'survey', vEnded:'end' };
+const TITLE = { vSetup:'はじめに', vSchedule:'検査までの予定', vFood:'食事のこと', vNav:'飲み方ナビ', vAfter:'検査のあと', vPrep:'モビプレップの作り方', vRule:'飲み方のきまり', vCaution:'服用時の注意点', vCancel:'検査の予約について', vBefore:'前日までに確認してください', vConsent:'記録の取り扱いについて', vSurvey:'アプリのアンケート', vEnded:'検査が終わりました' };
 let current = '';
 const stack = [];          // 戻り先の記録（アプリ内で管理）
 const scrollMem = {};
@@ -1087,12 +1333,23 @@ let skipPop = 0;           // 「もどる」ボタンで履歴を戻したと�
 // 開く環境によっては履歴の操作が禁止されているため、失敗しても止まらないようにする
 function hist(kind, id){ try{ history[kind]({ v:id }, '', '#' + HASH[id]); return true; }catch(e){ return false; } }
 
+// β1.6.35：検査日より前に飲み方ナビを開いたときは「練習」として使う（本番の記録とは別。保存も送信もしない）
+let PRACTICE = false, realS = null, practiceS = null;
+const practiceDay = () => !DEMO && /^\d{4}-\d{2}-\d{2}$/.test(S.date || '') && ymdOf(new Date()) < S.date;
+const newPractice = base => Object.assign(blankState(), { date:base.date, examTime:base.examTime, place:base.place, method:base.method, consent:false });
+function practiceSwitch(id){
+  if(id === 'vNav' && !PRACTICE && practiceDay()){ realS = S; S = practiceS || newPractice(realS); PRACTICE = true; }
+  else if(id !== 'vNav' && PRACTICE){ practiceS = S; S = realS; realS = null; PRACTICE = false; }
+}
 function render(id, restore){
+  practiceSwitch(id);
+  if(S.cancelled && !DEMO) id = 'vCancel';   // 院内で予約が取り消されたときは、ほかの画面を出さない
+  if(isEnded() && !['vEnded','vAfter'].includes(id) && !(id === 'vSurvey' && surveyOpen())) id = 'vEnded';   // β1.6.33：検査日の翌日から
   if(current) scrollMem[current] = window.scrollY;
   current = id;
   VIEWS.forEach(v => document.getElementById(v).classList.toggle('hidden', v !== id));
   document.getElementById('hTitle').textContent = TITLE[id];
-  const canBack = id !== 'vSchedule' && !(id === 'vSetup' && !S.date);
+  const canBack = id !== 'vSchedule' && id !== 'vCancel' && id !== 'vEnded' && !(id === 'vSetup' && !S.date) && !(id === 'vConsent' && needConsent());
   document.getElementById('btnBack').classList.toggle('hidden', !canBack);
   if(id === 'vSchedule') renderSchedule();
   if(id === 'vFood') renderFood();
@@ -1101,8 +1358,14 @@ function render(id, restore){
   if(id === 'vPrep')    document.getElementById(id).innerHTML = `<h2>モビプレップの作り方</h2>` + prepHTML();
   if(id === 'vRule')    document.getElementById(id).innerHTML = `<h2>飲み方のきまり</h2>` + ruleHTML();
   if(id === 'vCaution') document.getElementById(id).innerHTML = `<h2>服用時の注意点</h2>` + cautionHTML();
+  if(id === 'vConsent') document.getElementById(id).innerHTML = consentHTML();
+  if(id === 'vSurvey') document.getElementById(id).innerHTML = surveyHTML();
+  if(id === 'vEnded') document.getElementById(id).innerHTML = endedHTML();
+  if(id === 'vBefore' && !restore) beforeTab = 'caution';   // 予定の画面から開いたときは①から
+  if(id === 'vBefore')  document.getElementById(id).innerHTML = `<h2>前日までに確認してください</h2>` + beforeHTML();
   if(id === 'vSetup') renderSetup();
-  if(['vFood','vAfter','vPrep','vRule','vCaution'].includes(id)) document.getElementById(id).insertAdjacentHTML('beforeend', backBtn());
+  if(id === 'vCancel') renderCancel();
+  if(['vFood','vAfter','vPrep','vRule','vCaution','vBefore'].includes(id)) document.getElementById(id).insertAdjacentHTML('beforeend', backBtn());
   window.scrollTo(0, restore ? (scrollMem[id] || 0) : 0);
 }
 function show(id){
@@ -1195,11 +1458,15 @@ function openTooFast(){
 function closeSheet(){ document.getElementById('ov').classList.add('hidden'); }
 
 /* ---------- 操作 ---------- */
+document.addEventListener('keydown', e => { if(e.key === 'Enter' && e.target.classList && e.target.classList.contains('bigbtn')) e.target.click(); });
 document.addEventListener('click', e => {
   const t = e.target.closest('button,[data-go]'); if(!t) return;
   if(t.dataset.back) return goBack();
   if(t.dataset.cald){ document.getElementById('inDate').value = t.dataset.cald; document.getElementById('setupErr').textContent = ''; return renderCal(); }
   if(t.dataset.calm) return calMove(Number(t.dataset.calm));
+  if(t.dataset.sv){ const q = SURVEY.find(x => x.id === t.dataset.sv); if(q){ surveyAns[q.id] = q.o[Number(t.dataset.svk)]; surveyMsg = ''; render('vSurvey', true); } return; }   // β1.6.29
+  if(t.dataset.jump){ const el = document.getElementById(t.dataset.jump); if(el) el.scrollIntoView({ behavior:'smooth', block:'start' }); return; }   // β1.6.7
+  if(t.dataset.btab){ beforeTab = t.dataset.btab; document.getElementById('vBefore').innerHTML = `<h2>前日までに確認してください</h2>` + beforeHTML() + backBtn(); return window.scrollTo(0,0); }
   if(t.dataset.day){ selDay = t.dataset.day; renderSchedule(); return window.scrollTo(0,0); }
   if(t.dataset.go) return show(t.dataset.go);
   if(t.dataset.chk){ const id = t.dataset.chk; S.checks[id] = !S.checks[id]; save(); return renderSchedule(); }
@@ -1211,11 +1478,16 @@ document.addEventListener('click', e => {
     save(); renderNav(); return openStoolResult(lv, res);
   }
   switch(t.id){
+    case 'btnPracticeReset': { if(PRACTICE){ closeSheet(); S = newPractice(realS); renderNav(); window.scrollTo(0,0); } return; }
+    case 'btnSurveySend': return sendSurvey();
+    case 'btnConsentYes': return setConsent(true);
+    case 'btnConsentNo': return setConsent(false);
+    case 'btnPreOK': { S.checks.preOK = true; save(); return goBack(); }
     case 'btnStart': {
       const d = document.getElementById('inDate').value;
       const p = S._pick || S.place;
       if(!d || !p){ document.getElementById('setupErr').textContent = !d ? '検査日を選んでください。' : '飲む場所を選んでください。'; return; }
-      if(d !== S.date){ S.checks = {}; S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
+      if(d !== S.date){ S.checks = {}; S.drinks = []; S.stools = []; S.delStools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
       S.date = d; S.place = p; delete S._pick; save(); selDay = null;
       return resetTo('vSchedule');
     }
@@ -1256,7 +1528,7 @@ document.addEventListener('click', e => {
       if(!pastBase()){ S.baseOK = false; S.baseCall = ''; S.callAck = false; }
       if(!pastExtra()){ S.extraCall = false; S.extraAck = false; }
       save(); return renderNav();
-    case 'btnStoolUndo': S.stools.pop(); unclearIfNeeded(); computeCheck(); if(!S.stools.length && !S.callAck) S.baseOK = false; save(); return renderNav();
+    case 'btnStoolUndo': delStool(S.stools.pop()); unclearIfNeeded(); computeCheck(); if(!S.stools.length && !S.callAck) S.baseOK = false; save(); return renderNav();
     case 'btnNoStool': S.baseCall = 'nostool'; S.baseOK = false; save(); closeSheet(); renderNav(); return window.scrollTo(0,0);
     case 'btnPain': S.baseCall = 'pain'; S.baseOK = false; S.callAck = false; save(); closeSheet(); renderNav(); return window.scrollTo(0,0);
     case 'btnToilet': return openStoolPicker('toilet');
@@ -1265,7 +1537,7 @@ document.addEventListener('click', e => {
       save(); renderNav(); return window.scrollTo(0,0);
     case 'btnCheck': return openStoolPicker('check');
     case 'btnUnclear': {   // ④・⑤の押し間違い：最後に続いている④・⑤の記録をまとめて消す
-      while(S.stools.length && S.stools[S.stools.length-1].lv >= CONFIG.clearLevel) S.stools.pop();
+      while(S.stools.length && S.stools[S.stools.length-1].lv >= CONFIG.clearLevel) delStool(S.stools.pop());
       computeCheck(); S.stopMobi = false; S.allDone = false; S.lastWaterInProg = false;
       if(pastBase() && !baseJudged() && S.stools.length && !isClear(lastLv())) S.baseOK = true;   // 必ず飲む分の終わり：①〜③なら追加分へ
       if(pastExtra() && !S.extraAck && S.drinks.length === EXTRA_AT && S.curDone) S.extraCall = true;
@@ -1276,6 +1548,7 @@ document.addEventListener('click', e => {
       if(!confirm('お試しの記録を消して、最初からやり直しますか？')) return;
       const m = S.method; try{ localStorage.removeItem(KEY); }catch(e){}
       S = blankState(); S.method = m; save(); selDay = null; closeSheet(); window.scrollTo(0,0);
+      if(needConsent()){ consentNext = () => resetTo('vSetup'); return resetTo('vConsent'); }   // β1.6.27：やり直すときも同意の画面から
       return resetTo('vSetup');
     }
   }
@@ -1283,10 +1556,19 @@ document.addEventListener('click', e => {
 document.getElementById('ov').addEventListener('click', e => { if(e.target.id === 'ov') closeSheet(); });
 document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'hidden'){ syncNow(); return; }
+  backToToday();   // β1.6.34：ほかのアプリから戻ってきたら、今日の予定へ
   refreshSched();
   // ほかの画面から戻ってきたとき：時間を計算し直して表示する
   if(current === 'vNav'){ wakeLock = null; if(S.drinks.length) keepAwake(); renderNav(); }
 });
+
+// β1.6.34：今日のタブへ戻す（予定の画面を見ているときは描き直す）。検査日が過ぎていれば「検査が終わりました」へ
+let shownDay = '';
+function backToToday(){
+  shownDay = ymdOf(new Date()); selDay = null;
+  if(current === 'vSchedule' || isEnded()) render(current, true);
+}
+setInterval(() => { if(document.visibilityState === 'visible' && shownDay && ymdOf(new Date()) !== shownDay) backToToday(); }, 60000);   // 開いたまま日付が変わったとき
 
 /* ---------- 起動 ---------- */
 (async function init(){
@@ -1316,31 +1598,42 @@ document.addEventListener('visibilitychange', () => {
   if(hasSched){
     // 院内で予約が変わったときの予定（QRコードの内容より新しい）を優先する
     const before = qd ? { d:qd, t:qt } : null;   // 手元のQRコードに書かれた予定
+    // β1.5.2：院内からの予定で飲む場所が未選択のときは、手元のQRコードの飲む場所を使う（まだ選んでいない人だけ）
+    if(!S.place && (qp === 'home' || qp === 'clinic')) S.place = qp;
     schedChanged = applySched(sched);
     // 初めて開いた人でも、手元のQRコードの日付・時間と違えば知らせる
-    if(!schedChanged && before && S.date && (before.d !== S.date || (before.t && before.t !== S.examTime)) && !S.schedSeen){ schedChanged = true; }
+    if(!schedChanged && !S.cancelled && before && S.date && (before.d !== S.date || (before.t && before.t !== S.examTime)) && !S.schedSeen){ schedChanged = true; }
     if(schedChanged) S.schedSeen = S.schedAt;
     save();
   }else if(qd && /^\d{4}-\d{2}-\d{2}$/.test(qd) && (qp === 'home' || qp === 'clinic')){
     const mth = (qh && (CONFIG.methods[qh] || qh === 'standard')) ? qh : CONFIG.method;
-    if(qd !== S.date || mth !== curMethod()){ S.checks = {}; S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
+    if(qd !== S.date || mth !== curMethod()){ S.checks = {}; S.drinks = []; S.stools = []; S.delStools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
     S.date = qd; S.place = qp; S.method = mth; S.examTime = qt; save();
   }else if(qd && /^\d{4}-\d{2}-\d{2}$/.test(qd)){
     // 検査日と飲み方だけのQRコード（内視鏡カレンダーで「院内／自宅」が未選択のとき）：飲む場所は患者さんが最初の画面で選ぶ
     const mth = (qh && (CONFIG.methods[qh] || qh === 'standard')) ? qh : CONFIG.method;
-    if(qd !== S.date || mth !== curMethod()){ S.checks = {}; S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
+    if(qd !== S.date || mth !== curMethod()){ S.checks = {}; S.drinks = []; S.stools = []; S.delStools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
     S.date = qd; S.method = mth; S.examTime = qt; save();
   }else if(qh && (CONFIG.methods[qh] || qh === 'standard')){
     // 飲み方だけを指定したQRコード：検査日・飲む場所は患者さんが最初の画面で選ぶ
-    if(qh !== curMethod()){ S.drinks = []; S.stools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
+    if(qh !== curMethod()){ S.drinks = []; S.stools = []; S.delStools = []; S.stopMobi = false; S.allDone = false; S.checkDone = false; S.noStool = false; S.callAck = false; S.curDone = false; S.baseOK = false; S.baseCall = ''; S.extraCall = false; S.extraAck = false; S.lastWaterInProg = false; }
     S.method = qh; save();
   }
-  rebuild();
+  if(isEnded() && ((S.drinks || []).length || (S.stools || []).length || (S.delStools || []).length)){   // β1.6.33
+    const ck = S.checks; RESET_PROGRESS(); S.checks = ck; save();
+  }
+  rebuild(); shownDay = ymdOf(new Date());
   if(S.code) scheduleSync();
-  if(!S.date || !S.place) return resetTo('vSetup');
-  resetTo(fromHash());
-  if(schedChanged) schedNotice();
-  else if(!/^[A-Z0-9]{3,8}$/.test(qc) && S.code) refreshSched();
+  // β1.6.26：番号つきのQRコードで初めて開いたときは、記録の取り扱いへの同意を先に聞く
+  const go = () => {
+    if(!S.date || !S.place){ resetTo('vSetup'); return false; }
+    const f = fromHash(); resetTo(f === 'vConsent' ? 'vSchedule' : f);
+    if(schedChanged && !S.cancelled) schedNotice();
+    return true;
+  };
+  if(needConsent() && !S.cancelled){ consentNext = go; resetTo('vConsent'); }
+  else if(!go()) return;
+  if(!(schedChanged && !S.cancelled) && !/^[A-Z0-9]{3,8}$/.test(qc) && S.code) refreshSched();
   setInterval(() => { if(document.visibilityState === 'visible') refreshSched(); }, 5*60*1000);
   try{ history.scrollRestoration = 'manual'; }catch(e){}
 
