@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.49（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.50（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -326,21 +326,21 @@ p{margin:0 0 10px}
 .meter .bar{height:12px;border-radius:999px;background:var(--empty);overflow:hidden}
 .meter .bar i{display:block;height:100%;border-radius:999px;transition:width .4s}
 .next{text-align:center;padding:20px 14px}
-/* β1.6.49：飲み方ナビの枠を1画面（iPhone 15 Pro など）に収める */
-#vNav .panel{padding-top:10px;padding-bottom:10px}
+/* β1.6.50：飲み方ナビの枠（飲んだ量〜「押し間違えたので1つ戻す」）が、iPhone 15 Pro でちょうど1画面になる大きさ */
+#vNav .panel{padding-top:12px;padding-bottom:10px}
 #vNav .next{padding:6px 4px 2px}
 #vNav .next .what{font-size:15px;line-height:1.3}
 #vNav .next .slowsay{font-size:15px;margin:2px 0 0;line-height:1.35;letter-spacing:-.02em}
-#vNav .cupbig{width:150px;margin:2px auto 0}
-#vNav .next .big{font-size:20px;margin:0;line-height:1.3}
-#vNav .count{font-size:30px;line-height:1.15}
-#vNav .count small{display:inline;font-size:14px;margin-right:6px}
-#vNav .pace{font-size:15px;margin:0 0 4px;min-height:0}
+#vNav .cupbig{width:200px;margin:4px auto 0}
+#vNav .next .big{font-size:23px;margin:0;line-height:1.3}
+#vNav .count{font-size:36px;line-height:1.15}
+#vNav .count small{display:inline;font-size:15px;margin-right:6px}
+#vNav .pace{font-size:15px;margin:0 0 2px;min-height:0;letter-spacing:-.02em}
 #vNav .pace:empty{display:none}
-#vNav .next .btn{padding:10px 8px;font-size:18px;margin-top:6px}
-#vNav .navrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-#vNav .navrow .btn{margin:0;padding:8px 4px;font-size:15px;line-height:1.3;border-width:2px}
-#vNav .linkbtn{margin-top:4px}
+#vNav .next .btn{padding:12px 8px;font-size:19px;margin-top:8px}
+#vNav .navrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#vNav .navrow .btn{margin:0;padding:10px 4px;font-size:16px;line-height:1.3;border-width:2px}
+#vNav .linkbtn{margin-top:6px}
 .next .what{font-size:17px;color:var(--sub)}
 .next .slowsay{font-size:19px;font-weight:700;color:var(--deep);margin:6px 0 2px}
 .inlink{background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--deep);text-decoration:underline;cursor:pointer}
@@ -450,7 +450,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.49';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.50';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
