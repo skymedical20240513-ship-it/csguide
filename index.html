@@ -34,7 +34,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAAB
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.60（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.62（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -411,7 +411,9 @@ p{margin:0 0 10px}
 .stool button .sn{display:block;font-size:11px;font-weight:700;color:var(--sub);margin-top:3px;white-space:nowrap}
 .stool button .sn.ok{color:var(--ok)}
 .stool button{border:2px solid var(--line);border-radius:10px;padding:0 0 6px;background:var(--surface);font-size:13px;line-height:1.3;overflow:hidden}
-.stool button .sw{display:block;height:44px;margin-bottom:4px}
+.stool button .sw{display:block;height:44px;margin-bottom:4px;align-self:stretch}
+.stool button{display:flex;flex-direction:column;align-items:center;justify-content:flex-start}   /* β1.6.62：文字の行数がちがっても、色の見本がいつも上にそろうように（②だけ下にずれていた） */
+.stool button br{display:none}   /* 縦に並べるので改行は不要 */
 .stool button .n{font-weight:700;font-size:16px}
 .stool button.last{border-color:var(--deep);border-width:3px}
 .finish{background:var(--ok-soft);color:var(--ok);border-radius:12px;padding:12px 14px;font-weight:700;margin-top:10px}
@@ -443,6 +445,10 @@ p{margin:0 0 10px}
 .a2steps li{counter-increment:a2;position:relative;padding:10px 0 10px 40px;border-bottom:1px solid var(--line);font-size:17px;line-height:1.55}
 .a2steps li::before{content:counter(a2);position:absolute;left:0;top:11px;width:28px;height:28px;border-radius:50%;background:var(--deep);color:var(--onDeep);font-weight:700;font-size:15px;text-align:center;line-height:28px}
 .a2share{display:inline-block;vertical-align:-7px;width:28px;height:28px;border:1.5px solid var(--line);border-radius:7px;background:#fff;margin:0 2px}
+.a2tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;margin:0 0 8px}
+.a2tabs button{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 4px;font-size:16px;font-weight:700}
+.a2tabs button[aria-pressed="true"]{background:var(--deep);border-color:var(--deep);color:var(--onDeep)}
+.a2for{margin:6px 0 0;font-size:16px;color:var(--deep)}
 .a2note{display:flex;gap:12px;align-items:center;background:var(--sky);border-radius:12px;padding:10px 12px;font-size:15px;line-height:1.5;margin:4px 0 14px}
 .a2note img{width:44px;height:44px;border-radius:10px;flex:none}
 </style>
@@ -501,7 +507,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.60';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.62';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -949,11 +955,19 @@ async function openA2hs(){
     const p = a2hsPrompt; a2hsPrompt = null;
     try{ await p.prompt(); const r = await p.userChoice; if(r && r.outcome === 'accepted'){ a2hsSet('done'); if(current === 'vSchedule') renderSchedule(); } return; }catch(e){}
   }
-  const env = a2hsEnv(), sh = document.getElementById('sheet');
+  renderA2hs(a2hsEnv());
+  document.getElementById('ov').classList.remove('hidden');
+}
+// β1.6.61：開いているブラウザ（Safari・Chromeなど）に合わせた手順を出す。上の切り替えボタンで、ほかのブラウザの手順も見られる
+function renderA2hs(env){
+  const sh = document.getElementById('sheet');
   const SHARE = `<svg class="a2share" viewBox="0 0 28 28" aria-label="共有ボタン"><path d="M9 12 H7.5 V23 H20.5 V12 H19" fill="none" stroke="#0A84FF" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4.5 V16 M10 8.5 L14 4.5 L18 8.5" fill="none" stroke="#0A84FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const ADD = '<li>出てきたら一覧をスクロールして、<b>「ホーム画面に追加」</b>を押します。</li><li>右上の<b>「追加」</b>を押します。</li>';
+  const inApp = env.endsWith('inapp');
+  const TABS = env.startsWith('ios') ? [['ios-safari','Safari'],['ios-chrome','Chrome'],['ios-other','そのほか']]
+             : env.startsWith('and') ? [['and-chrome','Chrome'],['and-samsung','Galaxyのブラウザ']] : [];
   let body;
-  if(env === 'ios-inapp' || env === 'and-inapp'){
+  if(inApp){
     body = `<p class="say">今はLINEなどのアプリの中で開いているため、ここからは追加できません。</p><ol class="a2steps">`
       + `<li>画面の右上（または右下）のメニュー<b>「…」</b>を押します。</li>`
       + `<li><b>${env === 'ios-inapp' ? '「Safariで開く」' : '「ブラウザで開く」'}</b>を押します。</li>`
@@ -964,13 +978,17 @@ async function openA2hs(){
       : env === 'ios-other' ? `<li><b>共有ボタン</b>${SHARE}（またはメニュー）を押します。</li>` + ADD
       : env === 'and-samsung' ? `<li>画面の下の<b>「≡」</b>を押します。</li><li><b>「現在のページを追加」</b>→<b>「ホーム画面」</b>を押します。</li><li><b>「追加」</b>を押します。</li>`
       : `<li>画面の右上の<b>「︙」</b>を押します。</li><li><b>「ホーム画面に追加」</b>（または<b>「アプリをインストール」</b>）を押します。</li><li><b>「追加」</b>（または<b>「インストール」</b>）を押します。</li>`;
-    body = `<ol class="a2steps">${steps}</ol>`
+    const cur = TABS.find(t => t[0] === env);
+    body = (TABS.length ? `<p class="muted" style="margin:6px 0 6px">お使いのブラウザを選んでください</p><div class="a2tabs">`
+        + TABS.map(t => `<button type="button" data-a2env="${t[0]}" aria-pressed="${t[0] === env}">${t[1]}</button>`).join('') + `</div>` : '')
+      + (cur ? `<p class="a2for"><b>${cur[1]}</b>での手順</p>` : '')
+      + `<ol class="a2steps">${steps}</ol>`
       + `<div class="a2note"><img src="${HOME_ICON}" alt=""><span>ホーム画面に<b>「大腸検査準備」</b>のアイコンができます。次からは、そこから開いてください。</span></div>`;
   }
   sh.innerHTML = `<h2 style="margin:0 0 4px">ホーム画面に追加する</h2>` + body
-    + (env.endsWith('inapp') ? '' : `<button type="button" class="btn" id="a2Done">追加しました</button>`)
+    + (inApp ? '' : `<button type="button" class="btn" id="a2Done">追加しました</button>`)
     + `<button type="button" class="btn sub" id="a2Close" style="margin-top:10px">閉じる</button>`;
-  document.getElementById('ov').classList.remove('hidden');
+  sh.querySelectorAll('[data-a2env]').forEach(b => b.onclick = e => { e.stopPropagation(); renderA2hs(b.dataset.a2env); });
   const dn = document.getElementById('a2Done'); if(dn) dn.onclick = () => { a2hsSet('done'); closeSheet(); if(current === 'vSchedule') renderSchedule(); };
   document.getElementById('a2Close').onclick = closeSheet;
 }
