@@ -34,7 +34,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAAB
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.59（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.60（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -501,7 +501,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.59';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.60';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -1290,7 +1290,7 @@ function renderNav(){
   h += backBtn();
   v.innerHTML = h;
   const how = document.getElementById('navHow'); if(how) how.addEventListener('toggle', () => { navHowOpen = how.open; });
-  if(navOpening) setTimeout(alignNav, 0); else alignNav();   // β1.6.49：開いたときも、押したあとも、枠をヘッダーのすぐ下に
+  if(!navOpening) alignNav();   // β1.6.60：開いたときは画面のいちばん上から。「飲み終わった」などを押したあとは、枠（「必ず飲む」）をヘッダーのすぐ下に
   startTick();
 }
 // β1.6.49：「飲み終わった」「トイレに行った」などのあとは、コップの絵の枠がいつも同じ位置（ヘッダーのすぐ下）に来るようにする
@@ -1428,7 +1428,7 @@ function openStoolResult(lv, res){
   const sh = document.getElementById('sheet');
   sh.innerHTML = h + `<button type="button" class="btn" id="srOk" style="margin-top:14px">わかりました</button>`;
   document.getElementById('ov').classList.remove('hidden');
-  document.getElementById('srOk').onclick = () => { closeSheet(); window.scrollTo(0,0); };
+  document.getElementById('srOk').onclick = () => { closeSheet(); if(current === 'vNav') alignNav(); else window.scrollTo(0,0); };   // β1.6.60：トイレの記録のあとも「必ず飲む」の高さに戻す
 }
 function startTick(){ clearInterval(tick); updatePace(); tick = setInterval(updatePace, 1000); }
 function updatePace(){
