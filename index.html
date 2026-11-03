@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.51（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.54（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -96,15 +96,17 @@ details.guide .gbody{padding:0 16px 16px}
 .daytabs button[aria-selected="true"] b{font-size:min(19px,5vw)}
 .daytabs button[aria-selected="true"] .dd{font-size:30px}
 .daytabs button[aria-selected="true"] small{color:var(--onDeep);opacity:.9;font-size:14px}
-.daytabs button.prevday{background:#FFF7D6;border-color:#E0B21A;color:#7A5A00}
-.daytabs button.prevday small{color:#7A5A00}
-.daytabs button.prevday[aria-selected="true"]{background:linear-gradient(135deg,#D9A514,#B98A06);border-color:#B98A06;color:#fff}
+.daytabs button.prevday{background:#E6F1FC;border-color:#5B9BD5;color:#1F4E8C}   /* β1.6.52：検査前日・当日のタブは青系統 */
+.daytabs button.prevday small{color:#1F4E8C}
+.daytabs button.prevday[aria-selected="true"]{background:linear-gradient(135deg,#4A8FD9,#2F6FBF);border-color:#2F6FBF;color:#fff}
 .daytabs button.prevday[aria-selected="true"] small{color:#fff}
-.daytabs button.examday{background:#FDEBD3;border-color:#E8891A;color:#9A4A06}
-.daytabs button.examday small{color:#9A4A06}
-.daytabs button.examday[aria-selected="true"]{background:linear-gradient(135deg,#E8891A,#C9620C);border-color:#C9620C;color:#fff}
+.daytabs button.examday{background:#DCE6FA;border-color:#2E5FC4;color:#173F8F}
+.daytabs button.examday small{color:#173F8F}
+.daytabs button.examday[aria-selected="true"]{background:linear-gradient(135deg,#2E5FC4,#1B4096);border-color:#1B4096;color:#fff}
 .daytabs button.examday[aria-selected="true"] small{color:#fff}
-.daytabs .tdy{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--amber);color:#fff;font-style:normal;font-size:11px;font-weight:700;border-radius:999px;padding:0 8px;line-height:18px;white-space:nowrap}
+.daytabs .tdy{position:absolute;top:-15px;left:50%;transform:translateX(-50%);background:#E53935;color:#fff;font-style:normal;font-size:15px;font-weight:700;border:2px solid #fff;border-radius:999px;padding:0 12px;line-height:24px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.25);z-index:1}   /* β1.6.54：今日マークを大きく・赤で目立つように */
+.daytabs{padding-top:16px}
+.daytabs button:has(.tdy){padding-top:18px}   /* β1.6.54：今日マークと「検査前日」などの文字が重ならないように */   /* β1.6.54：大きくした今日マークが上にはみ出さないように */
 .daynav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
 .daynav .btn{font-size:17px;padding:12px 8px}
 .daynav .btn + .btn{margin-top:0}
@@ -274,7 +276,7 @@ p{margin:0 0 10px}
 #btnSurveySend:disabled{opacity:.5}
 .endbox h2{margin-top:0}
 #vEnded .item{grid-template-columns:76px 1fr}
-.backtoday{margin:-4px 0 14px;background:var(--amber);border-color:var(--amber);line-height:1.3}
+.backtoday{margin:-4px 0 14px;background:#fff;border:2.5px solid #E8891A;color:#9A4A06;line-height:1.3}   /* β1.6.52：白地にオレンジ枠 */
 .backtoday small{display:block;font-size:15px;font-weight:700}
 .backtoday b{display:block;font-size:20px}
 .practice{background:#EDE7F6;border:2px solid #7E57C2;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:16px}
@@ -290,15 +292,15 @@ p{margin:0 0 10px}
 .item.wide .ttl{font-size:20px}
 .timeline:empty{display:none}
 .bigwrap{margin:22px 0}
-.bigbtn{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,#E8891A,#C9620C);color:#fff;border-radius:16px;padding:18px 16px;cursor:pointer;box-shadow:0 4px 0 #8F4508}
-.bigbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #8F4508}
+.bigbtn{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,#2E9E5B,#1C7A42);color:#fff;border-radius:16px;padding:18px 16px;cursor:pointer;box-shadow:0 4px 0 #13542D}   /* β1.6.52：緑に */
+.bigbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #13542D}
 .bigbtn .bt{font-size:24px;font-weight:700;line-height:1.1}
 .bigbtn .bttl{font-size:20px;font-weight:700;line-height:1.4}
 .bigbtn .bdt{font-size:14px;margin-top:4px;opacity:.95}
 .bigbtn .bhint{grid-column:1 / -1;text-align:center}
 .bigbtn .bhint small{display:block;margin-top:6px;font-size:14px;font-weight:700;opacity:.95}
 .bigbtn .bhint span{display:inline-block;font-size:15px;font-weight:700;border:1.5px solid rgba(255,255,255,.85);border-radius:999px;padding:4px 16px}
-@keyframes bigpulse{0%,100%{box-shadow:0 4px 0 #8F4508,0 0 0 0 rgba(232,137,26,.55)}50%{box-shadow:0 4px 0 #8F4508,0 0 0 10px rgba(232,137,26,0)}}
+@keyframes bigpulse{0%,100%{box-shadow:0 4px 0 #13542D,0 0 0 0 rgba(46,158,91,.55)}50%{box-shadow:0 4px 0 #13542D,0 0 0 10px rgba(46,158,91,0)}}
 .bigbtn{animation:bigpulse 2.2s ease-in-out infinite}
 .bigbtn:active{animation:none}
 @media (prefers-reduced-motion: reduce){.bigbtn{animation:none}}
@@ -330,8 +332,9 @@ p{margin:0 0 10px}
 #vNav .panel{padding-top:12px;padding-bottom:10px}
 #vNav .segs{margin-bottom:14px}
 #vNav .segs > .divider{height:32px;margin-bottom:-3px}   /* 線を短くして、コップの高さの真ん中に */
-@keyframes cupblink{0%,100%{opacity:1}50%{opacity:.2}}
-#vNav .cups.one span.now{animation:cupblink 1.1s ease-in-out infinite}   /* いま飲む（飲んでいる）コップを点滅 */
+@keyframes cupblink{0%,46%{opacity:1}50%,96%{opacity:.15}100%{opacity:1}}   /* β1.6.53：じわっとではなくパッパと切り替わる点滅に
+*/
+#vNav .cups.one span.now{animation:cupblink 1.6s linear infinite}   /* いま飲む（飲んでいる）コップを点滅（β1.6.53：間隔を1.1秒→1.6秒にゆっくり） */
 @media (prefers-reduced-motion: reduce){#vNav .cups.one span.now{animation:none}}
 #vNav .ghost{visibility:hidden}
 #vNav .next{padding:4px 4px 2px}
@@ -460,7 +463,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.51';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.54';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -785,8 +788,8 @@ function buildDays(){
     { id:'e3', t:`${CONFIG.bpMedBy}まで`, title:'血圧の薬を飲んでいる方は飲む', dt:'それ以外の薬は医師の指示に従ってください' },
   ];
   if(home){
-    day.push({ id:'e4b', t:'飲む前', title:'モビプレップを作る', go:'vPrep', goLabel:'作り方を見る' });
-    day.push({ id:'e4c', t:'飲む前', title:'モビプレップの飲み方と注意事項を確認する', gos:[{ go:'vRule', label:'飲み方のきまりを見る' }, { go:'vCaution', label:'服用時の注意点を見る' }] });
+    day.push({ id:'e4b', t:'飲む前', title:'モビプレップを作る', go:'vPrep', goLabel:'モビプレップの作り方' });
+    day.push({ id:'e4c', t:'飲む前', title:'モビプレップの飲み方と注意事項を確認する', gos:[{ go:'vRule', label:'飲み方を見る' }, { go:'vCaution', label:'服用時の注意点を見る' }] });
     day.push({ id:'e5', t:homeStart(), title:'実際にモビプレップを飲み始めましょう', dt:`飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, key:true, big:true, go:'vNav', goLabel:'飲み始める' });
     day.push({ id:'e6', t:'', wide:true, title:`${homeArrive()}に来院してください`, dt: S.examTime ? `検査は${S.examTime}からです` : '', key:true });
   }else{
@@ -836,7 +839,7 @@ function renderSchedule(){
     const md = x.date ? `${x.date.getMonth()+1}/${x.date.getDate()}` : (x.range ? `${x.range[0].getMonth()+1}/${x.range[0].getDate()}〜` : '');
     const wd = x.date ? `（${WD[x.date.getDay()]}）` : '';
     const tdy = dayIsToday(x, today);
-    return `<button type="button" role="tab" data-day="${x.key}" aria-selected="${x.key===selDay}"${x.key === 'day' ? ' class="examday"' : x.key === 'prev' ? ' class="prevday"' : ''}>`   // β1.6.47〜：検査当日（オレンジ）・検査前日（黄色・β1.6.48）のタブは色を変える
+    return `<button type="button" role="tab" data-day="${x.key}" aria-selected="${x.key===selDay}"${x.key === 'day' ? ' class="examday"' : x.key === 'prev' ? ' class="prevday"' : ''}>`   // β1.6.47〜：検査当日・検査前日のタブは色を変える（β1.6.52：どちらも青系統）
       + (tdy ? `<i class="tdy">今日</i>` : '')
       + `<b>${esc(x.tab)}</b>` + (md ? `<span class="dd">${esc(md)}</span>` : '') + (wd ? `<small>${esc(wd)}</small>` : '') + `</button>`;
   }).join('') + `</div>`;
@@ -969,8 +972,7 @@ function beforeHTML(){
   if(beforeTab === 'caution'){
     h += `<div class="caution"><div class="ch">確認</div><b>便秘や下痢が続いていませんか</b>${esc(CONFIG.beforeCheck || CONFIG.beforeRule)}<div class="to">→ 前もって電話</div></div>`
       + `<a class="tel" href="tel:${tel}">📞 ${esc(CONFIG.phone)}</a>`
-      + `<div class="gos" style="margin-top:14px"><button type="button" class="go" data-go="vCaution">服用時の注意点を見る</button></div>`
-      + `<button type="button" class="btn" data-btab="flow" style="margin-top:20px">次へ：② 下剤内服の流れ →</button>`;
+      + `<div class="gos" style="margin-top:14px"><button type="button" class="go" data-go="vCaution">服用時の注意点を見る</button></div>`; // β1.6.52：「次へ：② 下剤内服の流れ」ボタンはなし
     return h;
   }
   h += `<div class="flow"><div class="fh">前日　${esc(fmtD(prevD))}</div>`
@@ -985,8 +987,8 @@ function beforeHTML(){
     h += row(CONFIG.clinic.arrive, '来院する', 'モビプレップは院内で、看護師の案内に沿って飲みます' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), true);
   }
   h += `</div><div class="gos">`
-    + `<button type="button" class="go" data-go="vRule">飲み方のきまりを見る</button>`
-    + (home ? `<button type="button" class="go" data-go="vPrep">作り方を見る</button>` : '')
+    + (home ? `<button type="button" class="go" data-go="vPrep">モビプレップの作り方</button>` : '')   // β1.6.52：作り方を左に
+    + `<button type="button" class="go" data-go="vRule">飲み方を見る</button>`
     + `</div>`
     + `<button type="button" class="btn" id="btnPreOK" style="margin-top:20px">${S.checks.preOK ? '✓ 確認しました' : '確認しました'}</button>`;
   return h;
@@ -1253,10 +1255,10 @@ function ruleHTML(){
 function cautionHTML(){
   const tel = telNo();
   return `<div class="panel">${videoLink('caution')}`
-    + `<div class="caution"><div class="ch">いつも</div><b>一人で飲まない</b>モビプレップは、ご家族など誰かがそばにいるときに飲んでください。<div class="to">→ 一人のときは前もってご相談ください</div></div>`
+    + `<div class="caution"><div class="ch">いつも</div><b>一人で飲まない</b>モビプレップは、ご家族など誰かがそばにいるときに飲んでください。</div>`
     + `<div class="caution"><div class="ch">飲む前</div><b>便秘・下痢が続いているとき</b>${esc(CONFIG.beforeRule)}<div class="to">→ 前もって電話</div></div>`
     + `<div class="caution"><div class="ch">飲み始めてから ①</div><b>症状が出たとき</b>気分がわるい・お腹が痛い・吐いた・寒気・じんましんなどの症状が出たら、がまんせずにすぐ飲むのをやめてください。飲み終わったあとに症状が出たときも同じです。<div class="to">→ すぐにやめて電話</div></div>`
-    + `<div class="caution"><div class="ch">飲み始めてから ②</div><b>半分飲んでも便が出ないとき</b>${esc(CONFIG.halfRule)}<div class="to">→ やめて電話</div></div>`
+    + `<div class="caution"><div class="ch">飲み始めてから ②</div><b>モビプレップを飲んでも便が出ないとき</b>${esc(CONFIG.halfRule)}<div class="to">→ やめて電話</div></div>`
     + `<a class="tel" href="tel:${tel}">📞 ${esc(CONFIG.phone)}</a></div>`;
 }
 const telBtn = () => `<a class="tel" href="tel:${esc(CONFIG.phone.replace(/[^\d]/g,''))}">📞 ${esc(CONFIG.phone)}</a>`;
