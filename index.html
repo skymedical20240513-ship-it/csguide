@@ -34,7 +34,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAAB
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.58（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.59（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -368,7 +368,7 @@ p{margin:0 0 10px}
 #vNav .ntot .lg{display:inline-block}
 #vNav .ntot .lg{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 #vNav .ntot .lg.m{background:var(--mobi)} #vNav .ntot .lg.w{background:var(--water)}
-#vNav .cupbig{width:100%;max-width:340px;margin:16px auto 18px}   /* β1.6.56：絵を画面の幅いっぱいまで大きく（β1.6.55は270px）、上下の余白は広いまま */
+#vNav .cupbig{width:100%;max-width:340px;margin:12px auto 14px}   /* β1.6.56：絵を画面の幅いっぱいまで大きく。β1.6.59：「押し間違えたので1つ戻す」まで1画面に入るよう、上下の余白を少しだけ詰める */
 #vNav .next .big{font-size:22px;margin:4px 0 0;line-height:1.25}   /* β1.6.55：絵との間を少しあける */
 #vNav .next .slowsay{font-size:15px;margin:8px 0 0;line-height:1.35;letter-spacing:-.02em}
 #vNav .count{font-size:34px;line-height:1.1}
@@ -501,7 +501,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.58';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.59';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -1297,7 +1297,8 @@ function renderNav(){
 let navOpening = false;
 function alignNav(){
   const p = document.querySelector('#vNav .panel'), hd = document.querySelector('header'); if(!p) return;
-  const y = p.getBoundingClientRect().top + window.scrollY - (hd ? hd.offsetHeight : 0) - 6;
+  // β1.6.59：iPhoneの画面上の時計・電池の部分の高さも入れて、ヘッダーの下ぎりぎりに合わせる（これまでは枠の上が隠れていた）
+  const y = p.getBoundingClientRect().top + window.scrollY - (hd ? hd.getBoundingClientRect().bottom : 0) - 6;
   window.scrollTo(0, Math.max(0, y));
 }
 const POSTERS = {
