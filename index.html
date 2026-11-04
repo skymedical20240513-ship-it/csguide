@@ -38,7 +38,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAAB
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&family=Lexend:wght@500;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.69（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.77（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -398,6 +398,7 @@ p{margin:0 0 10px}
 #vNav .next .slowsay{font-size:15px;margin:8px 0 0;line-height:1.35;letter-spacing:-.02em}
 #vNav .count{font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums;font-family:var(--fnum);font-weight:600}
 #vNav .count small{display:inline;font-size:15px;margin-right:6px}
+#vNav .count.wsay{font-family:inherit;font-size:clamp(14px,calc((100vw - 84px) / 16.5),20px);font-weight:700;color:var(--deep);white-space:nowrap;line-height:37px}   /* β1.6.70：時計（34px）と同じ高さ */
 #vNav .pace{font-size:15px;margin:0 0 2px;height:1.5em;line-height:1.5em;letter-spacing:-.02em;white-space:nowrap}
 #vNav .next .btn{padding:11px 8px;font-size:19px;margin-top:6px}
 #vNav .navrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
@@ -576,7 +577,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.69';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.77';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -622,7 +623,7 @@ const DEFAULT_CONFIG = {
   thirstRule: 'のどが渇いたら、決められた量とは別に水やお茶を飲んでかまいません。ご高齢の方や脱水に注意が必要な方は、積極的に飲みましょう。',
   beforeRule: '前回の排便が2日以上前（便秘）、または下痢が続いている場合は、モビプレップを飲む前に当院へ連絡してください。',   // 服用時の注意点のページ
   beforeCheck: '前回の排便が2日以上前（便秘）、または下痢が続いている場合は、前日のピコスルファートやセンノシド、当日のモビプレップを飲む前に当院へ連絡してください。',   // 前日のチェック項目（β1.6.0〜）
-  halfRule: 'モビプレップを半分（約1L）飲んだところで、便が出たかどうかを確認します。便が出ていない場合は、飲むのをやめて当院へ連絡してください。',
+  halfRule: 'モビプレップを半分（約1L）飲んだところで、まだ一度も便が出ていない場合は、飲むのをいったんやめて当院へ連絡してください。',
   prepWhen: '当日の朝、飲み始める前に作ります。',
   prepSteps: [
     'アルミの袋から、お薬のバッグを取り出します。',
@@ -1213,6 +1214,8 @@ document.addEventListener('input', e => { const t = e.target; if(t && t.dataset 
   const b = document.getElementById('btnEvalSend'); if(b){ const ok = evReady(); b.disabled = !ok; b.textContent = ok ? '評価を送る' : (EV.role ? '評価か気づいたことを1つ以上書くと送れます' : '職種を選ぶと送れます'); } } });
 
 /* ---------- 検査のあと（検査日の翌日から。β1.6.33） ---------- */
+// β1.6.75：「最初からやり直す」は、試作版（設定の「試作版です」の表示が入っている）で、パソコンのときだけ
+const pcResetOK = () => !!CONFIG.prototype && a2hsEnv() === 'pc';
 function endedHTML(){
   const u = parseD(surveyUntil());
   let h = `<div class="panel endbox"><h2>検査おつかれさまでした</h2><p style="margin:0">このアプリでの検査の準備のご案内は終わりました。ご利用ありがとうございました。</p></div>`
@@ -1222,7 +1225,9 @@ function endedHTML(){
   if(surveyOpen()) h += S.surveyDone
     ? `<div class="item"><div class="t soft">アンケート</div><div><div class="ttl">アンケートへのご協力、ありがとうございました</div></div></div>`
     : `<div class="item"><div class="t soft">アンケート</div><div><div class="ttl">このアプリのアンケートにご協力ください</div><div class="dt">4つの質問に答えるだけです（${u.getMonth()+1}月${u.getDate()}日まで）</div><button type="button" class="go" data-go="vSurvey">答える</button></div></div>`;
-  return h + `</div>`;
+  h += `</div>`;
+  if(pcResetOK()) h += `<div style="text-align:center;margin-top:18px"><button type="button" class="linkbtn" id="btnPcReset">最初からやり直す（試作版・パソコンのみ）</button></div>`;   // β1.6.75：試作版のときだけ。正式版は翌日から使えない
+  return h;
 }
 
 /* ---------- 前日までに確認すること（β1.6.0） ---------- */
@@ -1372,6 +1377,10 @@ function progressHTML(t, i){
 }
 const stoolBtns = last => STOOL.map((x,k)=>`<button type="button" data-stool="${k+1}" class="${last&&last.lv===k+1?'last':''}"><span class="sw" style="background:${x.c}"></span><span class="n">${x.n}</span><br>${x.label}${x.note ? `<span class="sn${x.ok?' ok':''}">${x.note}</span>` : ''}</button>`).join('');
 function checkpointHTML(){
+  if(S.stools.length) return askToiletHead()   // β1.6.77：記録が①〜③まで
+    + `<button type="button" class="btn" id="btnCheck">${IC_WC}トイレに行った</button>`
+    + `<button type="button" class="btn sub" id="btnNotGone">トイレに行っていない</button>`
+    + `<button type="button" class="btn sub" id="btnPain">お腹が痛い・吐き気がある・吐いた</button>`;
   return `<div class="stage go"><div class="mark">!</div><b>必ず飲む分を飲み終わりましたが、まだトイレの記録がありません</b></div>`
     + `<p class="say">便が出ていたら、「トイレに行った」から便の色を記録してください。</p>`
     + `<button type="button" class="btn" id="btnCheck">${IC_WC}トイレに行った</button>`
@@ -1389,14 +1398,25 @@ function callHTML(kind){
     + `<button type="button" class="btn sub" id="btnCallAck">電話で指示を受けたので、続けて飲む</button>`
     + `<button type="button" class="btn toilet" id="btnToilet">${IC_WC}トイレに行った</button>` + SICK_BTN + ``;
 }
+// β1.6.77：必ず飲む分を飲み終わったとき、記録が①〜③までなら「トイレに行きましたか？」
+function askToiletHead(){
+  const last = S.stools[S.stools.length-1], x = STOOL[last.lv-1];
+  return `<div class="stage go"><div class="mark">?</div><b>必ず飲む分を飲み終わりました。トイレに行きましたか？</b></div>`
+    + `<div class="pick"><span style="background:${x.c}"></span>最後の記録：${x.n} ${x.label}（${hm(last.t)}）</div>`
+    + `<p class="say">そのあとトイレに行っていたら、便の色を記録してください。</p>`;
+}
 // 便の色を選ぶ画面（トイレボタン・前半終了時の自動表示）
 function openStoolPicker(mode){
   const sh = document.getElementById('sheet');
-  const head = mode === 'check'
+  if(mode === 'check' && S.stools.length && pastBase() && !baseJudged()) mode = 'ask';
+  const head = mode === 'ask' ? askToiletHead().replace('そのあとトイレに行っていたら、便の色を記録してください。', 'そのあとトイレに行っていたら、便の色にいちばん近いものを押してください。')
+    : mode === 'check'
     ? `<div class="stage go"><div class="mark">!</div><b>必ず飲む分を飲み終わりましたが、まだトイレの記録がありません</b></div><p class="say">便が出ていたら、便の色にいちばん近いものを押してください。</p>`
     : `<h2>便の色を記録</h2><p class="say">便の色にいちばん近いものを押してください。</p>`;
   sh.innerHTML = head + `<div class="stool big">${stoolBtns(null)}</div>`
-    + (mode === 'check'
+    + (mode === 'ask'
+        ? `<button type="button" class="btn sub" id="btnNotGone" style="margin-top:12px">トイレに行っていない</button><button type="button" class="btn sub" id="btnPain">お腹が痛い・吐き気がある・吐いた</button><button type="button" class="linkbtn" id="spLater" style="display:block;margin:6px auto 0">あとで記録する</button>`
+      : mode === 'check'
         ? `<button type="button" class="btn sub" id="btnNoStool" style="margin-top:12px">まだ便が出ていない</button><button type="button" class="btn sub" id="btnPain">お腹が痛い・吐き気がある・吐いた</button><button type="button" class="linkbtn" id="spLater" style="display:block;margin:6px auto 0">あとで記録する</button>`
         : `<button type="button" class="btn sub" id="spLater" style="margin-top:12px">閉じる</button>`);
   document.getElementById('ov').classList.remove('hidden');
@@ -1406,6 +1426,8 @@ function openStoolPicker(mode){
 const SICK_BTN = `<button type="button" class="btn warn" id="btnSick">気分が悪い・お腹が痛いとき</button>`;
 let navHowOpen = false;   // 「この画面の使い方」を開いているか（画面を描き直しても開いたままにする）
 const slowSay = n => `<div class="slowsay">1杯を${intervalFor(n)}分くらいかけて、ゆっくり飲みましょう</div>`;   // β1.6.4
+// β1.6.70：水・お茶のときは、時計の場所に「数分かけてゆっくり」の案内（時計と同じ高さ）
+const waterSay = `<div class="count wsay">数分かけてゆっくり飲んでください</div>`;
 function renderNav(){
   const v = document.getElementById('vNav');
   const i = S.drinks.length, st = STEPS[i], t = totals(), dt = doneTotals();
@@ -1431,7 +1453,7 @@ function renderNav(){
       + `<div class="big">${cs.kind==='m'?'モビプレップ':'水かお茶'} ${cs.ml}mL</div>`
       + (cs.kind === 'm'
           ? slowSay(i) + `<div class="count" id="count"></div><div class="pace" id="pace"></div>`
-          : `<div class="slowsay ghost">　</div>` + `<div class="count ghost"><small>この1杯を飲み始めて</small>0:00</div><div class="pace ok">飲み終わったら、下のボタンを押してください</div>`)
+          : `<div class="slowsay ghost">　</div>` + waterSay + `<div class="pace ok">飲み終わったら、下のボタンを押してください</div>`)
       + `<button type="button" class="btn" id="btnDone">${endHere ? '飲み終わった' : '飲み終わった（次の1杯へ）'}</button>`
       + `<div class="navrow">` + `<button type="button" class="btn toilet" id="btnToilet">${IC_WC}トイレに行った</button>` + SICK_BTN + `</div></div>`;
   }
@@ -1440,7 +1462,7 @@ function renderNav(){
     h += `<div class="next" id="nextBox">` + `<div class="ntot"><span><b class="lg m"></b>モビプレップ 計<b>${dt.m}</b>mL</span><span><b class="lg w"></b>水・お茶 計<b>${dt.w}</b>mL</span></div>`
       + cupSVG(st.kind, st.ml)
       + `<div class="big">${st.kind==='m'?'モビプレップ':'水かお茶'} ${st.ml}mL</div>`
-      + (st.kind === 'm' ? slowSay(i + 1) : `<div class="slowsay ghost">　</div>`) + `<div class="count ghost"><small>この1杯を飲み始めて</small>0:00</div><div class="pace"></div>`
+      + (st.kind === 'm' ? slowSay(i + 1) + `<div class="count ghost"><small>この1杯を飲み始めて</small>0:00</div>` : `<div class="slowsay ghost">　</div>` + waterSay) + `<div class="pace"></div>`
       + `<button type="button" class="btn" id="btnDrink">飲み始める</button>`
       + `<div class="navrow">` + `<button type="button" class="btn toilet" id="btnToilet">${IC_WC}トイレに行った</button>` + SICK_BTN + `</div></div>`;
   }
@@ -1524,7 +1546,7 @@ function cautionHTML(){
     + `<div class="caution"><div class="ch">いつも</div><b>一人で飲まない</b>モビプレップは、ご家族など誰かがそばにいるときに飲んでください。</div>`
     + `<div class="caution"><div class="ch">飲む前</div><b>便秘・下痢が続いているとき</b>${esc(CONFIG.beforeRule)}<div class="to">→ 前もって電話</div></div>`
     + `<div class="caution"><div class="ch">飲み始めてから ①</div><b>症状が出たとき</b>気分がわるい・お腹が痛い・吐いた・寒気・じんましんなどの症状が出たら、がまんせずにすぐ飲むのをやめてください。飲み終わったあとに症状が出たときも同じです。<div class="to">→ すぐにやめて電話</div></div>`
-    + `<div class="caution"><div class="ch">飲み始めてから ②</div><b>モビプレップを飲んでも便が出ないとき</b>${esc(CONFIG.halfRule)}<div class="to">→ やめて電話</div></div>`
+    + `<div class="caution"><div class="ch">飲み始めてから ②</div><b>モビプレップを飲んでも便が出ないとき</b>${esc(CONFIG.halfRule)}<div class="to">→ 飲むのをいったんやめて電話</div></div>`
     + `<a class="tel" href="tel:${tel}">${IC_TEL}${esc(CONFIG.phone)}</a></div>`;
 }
 const telBtn = () => `<a class="tel" href="tel:${esc(CONFIG.phone.replace(/[^\d]/g,''))}">${IC_TEL}${esc(CONFIG.phone)}</a>`;
@@ -1538,11 +1560,14 @@ function lastWaterHTML(){
     + `<button type="button" class="btn" id="btnFinish">${S.lastWaterInProg ? '飲み終わった（これで終わり）' : '飲みました（これで終わり）'}</button></div>`
     + undoClearBtn();
 }
+// β1.6.74：お腹が痛い・吐き気があると押したあとに終わったときの一文
+const PAIN_NOTE = `<p class="say">お腹の痛みや吐き気がある場合は、当院へ連絡してください。</p>`;
 // すべて終了
 function doneHTML(){
   const arrive = S.place === 'home' ? `<p class="arr"><b>${homeArrive()}</b> に来院してください。</p>` : `<p class="arr">看護師に声をかけてください。</p>`;   // β1.6.11：大きく表示
   return `<div class="stage ok"><div class="mark">✓</div><b>下剤はこれで終わりです。おつかれさまでした。</b></div>`
     + `<div class="donebox">${arrive}</div>`
+    + (S.baseCall === 'pain' && !S.callAck ? PAIN_NOTE + telBtn() : '')   // β1.6.74
     + undoClearBtn();
 }
 // 全部飲んでもきれいにならない
@@ -1559,6 +1584,7 @@ function judgeStool(lv){
     if(isClear(lv)){ S.allDone = true; return 'doneBase'; }
     S.baseOK = true; return 'toExtra';
   }
+  if(S.baseCall === 'pain' && !S.callAck && isClear(lv)){ S.allDone = true; return 'painDone'; }   // β1.6.74：お腹が痛いのあとに④・⑤→終わり
   if(S.baseCall && !S.callAck) return 'callBase';                    // 電話の案内中は、それを優先
   if(isClear(lv)){                                                   // 追加分・その後：きれいになったら終わり
     S.stopMobi = true;
@@ -1592,7 +1618,13 @@ function openStoolResult(lv, res){
         + `<p class="say">${S.lastWaterInProg ? 'いま飲んでいる水・お茶を飲み終えたら、終わりです。' : '最後に<b>水かお茶をコップ1杯</b>飲んで、終わりです。'}</p>`; break;
     case 'doneExtra':
       h = ok('便がきれいになりました') + `<p class="say">水・お茶まで飲み終わっているので、<b>これで下剤は終わりです。</b></p>`; break;
+    case 'painDone':   // β1.6.74
+      h = ok('便はきれいになりました') + `<p class="say">必ず飲む分を飲み終わっているので、<b>モビプレップはここで終わりです。</b></p>` + PAIN_NOTE; break;
     case 'callBase': case 'callExtra': case 'notClearAll':
+      if(isClear(lv)){   // β1.6.71：④・⑤なのに「まだきれいになっていません」と出ていた（お腹の痛み・吐き気で電話の案内中のとき）
+        h = ok('便はきれいになりました')   // β1.6.72：電話の文は出さない（院長の指示）
+          + (pastBase() ? `<p class="say">必ず飲む分を飲み終わっているので、<b>モビプレップはここで終わりです。</b></p>` : ''); break;   // β1.6.73
+      }
       h = ng('まだきれいになっていません') + `<p class="say"><b>当院へ電話して</b>、このあとどうするか確認してください。</p><p class="muted">電話番号は、このあとの画面に表示します。</p>`; break;
     default:
       h = go('まだきれいになっていません') + `<p class="say"><b>モビプレップを続けて飲みましょう。</b>${pastBase() ? '④（うすい黄）か⑤（透明）になったら終わりです。' : `まずは必ず飲む分（${BASE.text}）まで飲みます。`}</p>`;
@@ -1763,8 +1795,8 @@ function openCallNotice(kind){
 function openTooFast(){
   const sh = document.getElementById('sheet');
   sh.innerHTML = `<div class="stage ng"><div class="mark">!</div><b>ペースが速すぎます</b></div>`
-    + `<p class="say">飲み始めてから${CONFIG.tooFastMin}分たっていません。モビプレップは、1杯を${CONFIG.intervalMin}〜${CONFIG.slowMin}分くらいかけて<b>ゆっくり</b>飲んでください。</p>`
-    + `<p class="muted">速く飲むと、気分が悪くなったり吐き気が出たりすることがあります。次の1杯は、コップの絵に合わせてゆっくり飲みましょう。押し間違えた場合は「押し間違えたので1つ戻す」で戻せます。</p>`
+    + `<p class="say">モビプレップは、1杯を${CONFIG.intervalMin}〜${CONFIG.slowMin}分くらいかけて<b>ゆっくり</b>飲んでください。</p>`
+    + `<p class="muted">速く飲むと、気分が悪くなったり吐き気が出たりすることがあります。押し間違えた場合は「押し間違えたので1つ戻す」で戻せます。</p>`
     + `<button type="button" class="btn" id="tfOk" style="margin-top:12px">わかりました</button>`;
   document.getElementById('ov').classList.remove('hidden');
   document.getElementById('tfOk').onclick = closeSheet;
@@ -1829,7 +1861,7 @@ document.addEventListener('click', e => {
         // 必ず飲む分を飲み終えた：最新の便で判断
         if(!S.stools.length) after = 'pick';
         else if(isClear(lastLv())){ S.allDone = true; after = 'doneBase'; }
-        else { S.baseOK = true; after = 'toExtra'; }
+        else after = 'ask';   // β1.6.77：①〜③までのときは、追加へ進む前に「トイレに行きましたか？」と一度聞く
       }else if(i === EXTRA_AT && i !== CHECK_AT && !S.stopMobi){
         // 追加分を飲み終えた：きれいでなければ電話
         if(isClear(lastLv())) S.allDone = true; else { S.extraCall = true; after = 'callExtra'; }
@@ -1837,6 +1869,7 @@ document.addEventListener('click', e => {
       save(); renderNav();
       if(after){ window.scrollTo(0,0);
         if(after === 'pick') return openStoolPicker('check');
+        if(after === 'ask') return openStoolPicker('ask');
         if(after === 'callExtra') return openCallNotice('extra');
         return openStoolResult(lastLv(), after);
       }
@@ -1857,6 +1890,15 @@ document.addEventListener('click', e => {
       if(pastExtra() && S.extraCall && !S.extraAck) S.extraAck = true; else { S.callAck = true; S.baseOK = true; }
       save(); renderNav(); return window.scrollTo(0,0);
     case 'btnCheck': return openStoolPicker('check');
+    case 'btnNotGone': {   // β1.6.77：トイレに行っていない → 最後の記録（①〜③）のまま追加分へ
+      if(!(pastBase() && !baseJudged() && S.stools.length)) return closeSheet();
+      S.baseOK = true; save(); closeSheet(); renderNav(); window.scrollTo(0,0);
+      return openStoolResult(lastLv(), 'toExtra'); }
+    case 'btnPcReset': {   // β1.6.74：パソコンで開いたときだけ。検査日などを消して「はじめに」から（β1.6.75：試作版のときだけ）
+      if(!pcResetOK()) return;
+      if(!confirm('このパソコンに残っている検査日などの記録を消して、最初からやり直しますか？')) return;
+      try{ localStorage.removeItem(KEY); }catch(e){}
+      location.href = location.pathname; return; }
     case 'btnUnclear': {   // ④・⑤の押し間違い：最後に続いている④・⑤の記録をまとめて消す
       while(S.stools.length && S.stools[S.stools.length-1].lv >= CONFIG.clearLevel) delStool(S.stools.pop());
       computeCheck(); S.stopMobi = false; S.allDone = false; S.lastWaterInProg = false;
