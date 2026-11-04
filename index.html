@@ -38,7 +38,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAAB
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&family=Lexend:wght@500;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.68（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.69（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -341,22 +341,22 @@ p{margin:0 0 10px}
 .item.wide .ttl{font-size:20px}
 .timeline:empty{display:none}
 .bigwrap{margin:22px 0}
-.bigbtn{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:#23874C;color:#fff;border-radius:var(--r-l);padding:18px 16px;cursor:pointer;box-shadow:0 4px 0 #13542D}   /* β1.6.52：緑に */
-.bigbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #13542D}
+.bigbtn{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:#2A93DB;color:#fff;border-radius:var(--r-l);padding:18px 16px;cursor:pointer;box-shadow:0 4px 0 #1A68A3}   /* β1.6.52：緑に。β1.6.69：スカイブルーに */
+.bigbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #1A68A3}
 .bigbtn .bt{font-size:26px;font-weight:600;line-height:1.1;font-family:var(--fnum)}
 .bigbtn .bttl{font-size:20px;font-weight:700;line-height:1.4}
 .bigbtn .bdt{font-size:14px;margin-top:4px;opacity:.95}
 .bigbtn .bhint{grid-column:1 / -1;text-align:center}
 .bigbtn .bhint small{display:block;margin-top:6px;font-size:14px;font-weight:700;opacity:.95}
 .bigbtn .bhint span{display:inline-block;font-size:15px;font-weight:700;border:1.5px solid rgba(255,255,255,.85);border-radius:999px;padding:4px 16px}
-@keyframes bigpulse{0%,100%{box-shadow:0 4px 0 #13542D,0 0 0 0 rgba(46,158,91,.55)}50%{box-shadow:0 4px 0 #13542D,0 0 0 10px rgba(46,158,91,0)}}
+@keyframes bigpulse{0%,100%{box-shadow:0 4px 0 #1A68A3,0 0 0 0 rgba(42,147,219,.55)}50%{box-shadow:0 4px 0 #1A68A3,0 0 0 10px rgba(42,147,219,0)}}
 .bigbtn{animation:bigpulse 2.2s ease-in-out infinite}
 .bigbtn:active{animation:none}
 @media (prefers-reduced-motion: reduce){.bigbtn{animation:none}}
 .item.ng .ttl{color:var(--ng)}
 .item .go{margin-top:8px;display:inline-block;background:var(--surface);color:var(--deep);border:1.5px solid var(--deep);border-radius:var(--r-s);padding:5px 12px;font-size:15px;font-weight:700;line-height:1.4}   /* β1.6.63：説明を開くボタンは白地に枠（主役のボタンと強さを分ける） */
 .chk{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--chkline);background:var(--surface);font-size:18px;line-height:1;color:transparent}
-.chk[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.chk[aria-pressed="true"]{background:var(--deep);border-color:var(--deep);color:var(--onDeep)}   /* β1.6.69：緑→青 */
 .item.done .ttl,.item.done .dt{opacity:.55}
 
 /* 食事 */
@@ -576,7 +576,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.68';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.69';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -1840,7 +1840,7 @@ document.addEventListener('click', e => {
         if(after === 'callExtra') return openCallNotice('extra');
         return openStoolResult(lastLv(), after);
       }
-      if(tooFast && !DEMO) return openTooFast();   // お試し版では続けて押せるように警告を出さない
+      if(tooFast) return openTooFast();   // β1.6.69：お試し版・評価版でも出す（スタッフが評価で確かめられるように）
       return;
     }
     case 'btnUndo':
