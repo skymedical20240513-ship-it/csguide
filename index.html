@@ -38,7 +38,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAAB
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&family=Lexend:wght@500;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.77（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.82（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -50,7 +50,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAAB
   --amber:#C97E12; --amber-soft:#FCEFD9;
   --ok:#2E7A55; --ok-soft:#E1F2E8; --ng:#B83E35; --ng-soft:#FBE6E3;
   --mobi:#B9A6E0; --water:#9ED0E8; --empty:#E6EDF6;
-  --rule:#E2EAF4; --chkline:#B2C3DA;                 /* β1.6.63：区切りの細い線（枠より弱い） */
+  --rule:#E2EAF4; --chkline:#B2C3DA; --chkOff:#C5CAD2; --chkOn:#D7322A;                 /* β1.6.63：区切りの細い線（枠より弱い） */
   --r-s:6px; --r-m:10px; --r-l:12px;   /* β1.6.63：角丸は3段階だけ（小さな部品／ボタン／まとまり） */
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -63,7 +63,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAAB
     --sky:#1A2C4E; --deep:#8DBDF2; --onDeep:#0A1326;
     --amber:#F0B04F; --amber-soft:#3A2E18;
     --ok:#6FCB9A; --ok-soft:#183328; --ng:#F08A80; --ng-soft:#3A1F1C;
-    --mobi:#6E5AA6; --water:#2F6F8A; --empty:#1E2E4C; --rule:#1C2B48; --chkline:#455A80;
+    --mobi:#6E5AA6; --water:#2F6F8A; --empty:#1E2E4C; --rule:#1C2B48; --chkline:#455A80; --chkOff:#3E4C66; --chkOn:#FF6A5C;
   }
 }
 :root[data-theme="dark"]{
@@ -72,7 +72,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAAB
   --sky:#1A2C4E; --deep:#8DBDF2; --onDeep:#0A1326;
   --amber:#F0B04F; --amber-soft:#3A2E18;
   --ok:#6FCB9A; --ok-soft:#183328; --ng:#F08A80; --ng-soft:#3A1F1C;
-  --mobi:#6E5AA6; --water:#2F6F8A; --empty:#1E2E4C; --rule:#1C2B48; --chkline:#455A80;
+  --mobi:#6E5AA6; --water:#2F6F8A; --empty:#1E2E4C; --rule:#1C2B48; --chkline:#455A80; --chkOff:#3E4C66; --chkOn:#FF6A5C;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
@@ -355,8 +355,14 @@ p{margin:0 0 10px}
 @media (prefers-reduced-motion: reduce){.bigbtn{animation:none}}
 .item.ng .ttl{color:var(--ng)}
 .item .go{margin-top:8px;display:inline-block;background:var(--surface);color:var(--deep);border:1.5px solid var(--deep);border-radius:var(--r-s);padding:5px 12px;font-size:15px;font-weight:700;line-height:1.4}   /* β1.6.63：説明を開くボタンは白地に枠（主役のボタンと強さを分ける） */
-.chk{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--chkline);background:var(--surface);font-size:18px;line-height:1;color:transparent}
-.chk[aria-pressed="true"]{background:var(--deep);border-color:var(--deep);color:var(--onDeep)}   /* β1.6.69：緑→青 */
+/* β1.6.79：「済」のはんこ。押す前は灰色の点線の丸、押すと赤い丸に「済」 */
+.chk{width:34px;height:34px;border:0;background:transparent;padding:0;line-height:0;color:var(--chkOff)}
+.chk svg{width:34px;height:34px;display:block;overflow:visible}
+.chk .ring{fill:none;stroke:currentColor;stroke-width:2;stroke-dasharray:4 3}
+.chk text{font-size:18px;font-weight:700;fill:currentColor;opacity:0}
+.chk[aria-pressed="true"]{color:var(--chkOn)}
+.chk[aria-pressed="true"] .ring{stroke-width:2.5;stroke-dasharray:none}
+.chk[aria-pressed="true"] text{opacity:1}
 .item.done .ttl,.item.done .dt{opacity:.55}
 
 /* 食事 */
@@ -385,6 +391,23 @@ p{margin:0 0 10px}
 */
 #vNav .cups.one span.now{animation:cupblink 1.6s linear infinite}   /* いま飲む（飲んでいる）コップを点滅（β1.6.53：間隔を1.1秒→1.6秒にゆっくり） */
 @media (prefers-reduced-motion: reduce){#vNav .cups.one span.now{animation:none}}
+/* β1.6.80：上のコップの並びを大きく（1列のまま）。飲んでいないコップは中身が入っていて、飲んだら白に */
+#vNav .panel{padding-left:10px;padding-right:10px}
+#vNav .segs{gap:3px}
+#vNav .seg .sl{margin-bottom:4px}
+#vNav .seg .sl b{font-size:18px;line-height:1.2;white-space:nowrap;overflow:hidden}
+#vNav .seg .sl small{font-size:14px;font-weight:700;line-height:1.3}
+#vNav .cups.one{gap:2px}
+#vNav .cups.one span{max-width:32px;height:32px;border-radius:3px 3px 10px 10px}
+#vNav .cups.one span{border:0;background:transparent;border-radius:0}
+#vNav .cups.one span svg{display:block;width:100%;height:100%;overflow:visible}
+#vNav .cups.one span path{stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+#vNav .cups.one span.m path{fill:var(--mobi);stroke:var(--mobi)}
+#vNav .cups.one span.w path{fill:var(--water);stroke:var(--water)}
+#vNav .cups.one span.done path{fill:var(--surface)}
+#vNav .cups.one span.now path{stroke:var(--amber);stroke-width:3}
+#vNav .seg.extra:not(.on) .cups span{opacity:.45}
+#vNav .segs > .divider{height:38px;margin-bottom:-3px}
 #vNav .ghost{visibility:hidden}
 #vNav .next{padding:4px 4px 2px}
 #vNav .ntot{display:flex;justify-content:center;gap:18px;font-size:15px;color:var(--sub);margin:0 0 2px}
@@ -393,7 +416,7 @@ p{margin:0 0 10px}
 #vNav .ntot .lg{display:inline-block}
 #vNav .ntot .lg{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 #vNav .ntot .lg.m{background:var(--mobi)} #vNav .ntot .lg.w{background:var(--water)}
-#vNav .cupbig{width:100%;max-width:340px;margin:12px auto 14px}   /* β1.6.56：絵を画面の幅いっぱいまで大きく。β1.6.59：「押し間違えたので1つ戻す」まで1画面に入るよう、上下の余白を少しだけ詰める */
+#vNav .cupbig{width:100%;max-width:300px;margin:12px auto 14px}   /* β1.6.56：絵を画面の幅いっぱいまで大きく。β1.6.59：「押し間違えたので1つ戻す」まで1画面に入るよう、上下の余白を少しだけ詰める */
 #vNav .next .big{font-size:22px;margin:4px 0 0;line-height:1.25}   /* β1.6.55：絵との間を少しあける */
 #vNav .next .slowsay{font-size:15px;margin:8px 0 0;line-height:1.35;letter-spacing:-.02em}
 #vNav .count{font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums;font-family:var(--fnum);font-weight:600}
@@ -577,7 +600,7 @@ p{margin:0 0 10px}
       設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.77';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.82';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -985,7 +1008,7 @@ function renderSchedule(){
       + (it.go ? `<button type="button" class="go" data-go="${it.go}">${esc(it.goLabel || '詳しく見る')}</button>` : '')
       + (it.tel ? `<div class="itel">${telBtn()}</div>` : '')
       + (it.gos ? `<div class="gos">${it.gos.map(g=>`<button type="button" class="go" data-go="${g.go}">${esc(g.label)}</button>`).join('')}</div>` : '')
-      + `</div>` + (it.wide ? '' : `<button type="button" class="chk" data-chk="${it.id}" aria-pressed="${done}" aria-label="済み">✓</button>`) + `</div>`;   // β1.6.22：来院の文はチェックなし
+      + `</div>` + (it.wide ? '' : `<button type="button" class="chk" data-chk="${it.id}" aria-pressed="${done}" aria-label="済み">${CHK_MARK}</button>`) + `</div>`;   // β1.6.22：来院の文はチェックなし
   });
   h += `</div></div>`;
 
@@ -1216,6 +1239,8 @@ document.addEventListener('input', e => { const t = e.target; if(t && t.dataset 
 /* ---------- 検査のあと（検査日の翌日から。β1.6.33） ---------- */
 // β1.6.75：「最初からやり直す」は、試作版（設定の「試作版です」の表示が入っている）で、パソコンのときだけ
 const pcResetOK = () => !!CONFIG.prototype && a2hsEnv() === 'pc';
+// β1.6.79：チェックの印（「済」のはんこ）
+const CHK_MARK = `<svg viewBox="0 0 36 36" aria-hidden="true"><circle class="ring" cx="18" cy="18" r="15"/><text x="18" y="24.6" text-anchor="middle">済</text></svg>`;
 function endedHTML(){
   const u = parseD(surveyUntil());
   let h = `<div class="panel endbox"><h2>検査おつかれさまでした</h2><p style="margin:0">このアプリでの検査の準備のご案内は終わりました。ご利用ありがとうございました。</p></div>`
@@ -1341,7 +1366,7 @@ function calcCheckAt(){
 function partInfo(from, to){
   const b = STEPS.slice(from, to), m = b.filter(x=>x.kind==='m'), w = b.filter(x=>x.kind==='w');
   const mml = m.reduce((a,x)=>a+x.ml,0), wml = w.reduce((a,x)=>a+x.ml,0);
-  return { nm:m.length, nw:w.length, mml, wml, short:`${m.length}杯＋水・お茶${w.length}杯` };
+  return { nm:m.length, nw:w.length, mml, wml, short:`${m.length}杯＋水・お茶${w.length}杯`, alt:`${m.length}杯＋水${w.length}杯` };
 }
 // 飲み方（方式）に合わせて、飲む順番・区切りを作り直す
 function rebuild(){
@@ -1361,18 +1386,20 @@ function computeCheck(){
   S.checkDone = S.stools.length > 0;   // 1回でもトイレの記録があれば、最新の記録で判断する
   if(S.checkDone) S.noStool = false;
 }
+// β1.6.82：上の並びのコップの形。上が広く底がせまい台形で、底は平ら（線の太さは縦横に伸ばしても変わらない）
+const CUP_SHAPE = `<svg viewBox="0 0 20 32" preserveAspectRatio="none" aria-hidden="true"><path d="M1.2 1.5 H18.8 L16.2 30.5 H3.8 Z"/></svg>`;
 function progressHTML(t, i){
   const dc = (S.curDone || i === 0) ? i : i - 1, ni = dc;
-  const cup = (x,k) => `<span class="${x.kind}${k<dc?' done':''}${k===ni?' now':''}"></span>`;
+  const cup = (x,k) => `<span class="${x.kind}${k<dc?' done':''}${k===ni?' now':''}">${CUP_SHAPE}</span>`;   // β1.6.82：コップの形（上が広く、底が平ら）
   const part = (a,b) => STEPS.slice(a,b).map((x,k) => cup(x, a+k)).join('');
   const extraOn = S.baseOK || S.callAck, restOn = S.extraAck;
   const hasRest = STEPS.length > EXTRA_AT;
   return `<div class="segs">`
-    + `<div class="seg base" style="flex:${CHECK_AT} 1 0"><div class="sl"><b>必ず飲む</b><small>${BASE.short}</small></div><div class="cups one">${part(0, CHECK_AT)}</div></div>`
+    + `<div class="seg base" style="flex:${CHECK_AT} 1 0"><div class="sl"><b>必ず飲む</b><small data-alt="${BASE.alt}">${BASE.short}</small></div><div class="cups one">${part(0, CHECK_AT)}</div></div>`
     + `<span class="divider${extraOn?' ok':''}" aria-hidden="true"></span>`
-    + `<div class="seg extra${extraOn?' on':''}" style="flex:${EXTRA_AT-CHECK_AT} 1 0"><div class="sl"><b>追加</b><small>${EXTRA.short}</small></div><div class="cups one">${part(CHECK_AT, EXTRA_AT)}</div></div>`
+    + `<div class="seg extra${extraOn?' on':''}" style="flex:${EXTRA_AT-CHECK_AT} 1 0"><div class="sl"><b>追加</b><small data-alt="${EXTRA.alt}">${EXTRA.short}</small></div><div class="cups one">${part(CHECK_AT, EXTRA_AT)}</div></div>`
     + (hasRest ? `<span class="divider${restOn?' ok':''}" aria-hidden="true"></span>`
-      + `<div class="seg extra${restOn?' on':''}" style="flex:${STEPS.length-EXTRA_AT} 1 0"><div class="sl"><b>その後</b><small>指示があれば</small></div><div class="cups one">${part(EXTRA_AT, STEPS.length)}</div></div>` : '')
+      + `<div class="seg extra${restOn?' on':''}" style="flex:${STEPS.length-EXTRA_AT} 1 0"><div class="sl"><b>その後</b><small data-alt="指示で">指示があれば</small></div><div class="cups one">${part(EXTRA_AT, STEPS.length)}</div></div>` : '')
     + `</div>`;
 }
 const stoolBtns = last => STOOL.map((x,k)=>`<button type="button" data-stool="${k+1}" class="${last&&last.lv===k+1?'last':''}"><span class="sw" style="background:${x.c}"></span><span class="n">${x.n}</span><br>${x.label}${x.note ? `<span class="sn${x.ok?' ok':''}">${x.note}</span>` : ''}</button>`).join('');
@@ -1483,10 +1510,24 @@ function renderNav(){
 
   h += backBtn();
   v.innerHTML = h;
+  fitSegLabels();
   const how = document.getElementById('navHow'); if(how) how.addEventListener('toggle', () => { navHowOpen = how.open; });
   if(!navOpening) alignNav();   // β1.6.60：開いたときは画面のいちばん上から。「飲み終わった」などを押したあとは、枠（「必ず飲む」）をヘッダーのすぐ下に
   startTick();
 }
+// β1.6.80：「必ず飲む」などの下の「6杯＋水・お茶3杯」が入らないときは「6杯＋水3杯」に。それでも入らなければ字を少し小さく
+function fitSegLabels(){
+  document.querySelectorAll('#vNav .seg .sl b').forEach(el => {   // 見出し（必ず飲む・追加・その後）も1行に
+    el.style.fontSize = '';
+    for(let f = 17; f >= 13 && el.scrollWidth > el.clientWidth + 1; f--) el.style.fontSize = f + 'px';
+  });
+  document.querySelectorAll('#vNav .seg .sl small').forEach(el => {
+    el.style.fontSize = '';
+    if(el.scrollWidth > el.clientWidth + 1 && el.dataset.alt) el.textContent = el.dataset.alt;
+    for(let f = 13; f >= 11 && el.scrollWidth > el.clientWidth + 1; f--) el.style.fontSize = f + 'px';
+  });
+}
+window.addEventListener('resize', () => { if(current === 'vNav') fitSegLabels(); });
 // β1.6.49：「飲み終わった」「トイレに行った」などのあとは、コップの絵の枠がいつも同じ位置（ヘッダーのすぐ下）に来るようにする
 let navOpening = false;
 function alignNav(){
