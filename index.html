@@ -38,7 +38,7 @@ const HOME_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAAB
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&family=Lexend:wght@500;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.82（患者用）
+   大腸カメラ検査のご案内  CSGUIDE Ver β1.6.98（患者用）
    ========================================================= */
 :root{
   color-scheme: light;
@@ -307,16 +307,17 @@ p{margin:0 0 10px}
 #vBefore .gos{display:flex;flex-wrap:wrap;gap:8px}
 #vBefore .go{display:inline-block;background:var(--surface);color:var(--deep);border:1.5px solid var(--deep);border-radius:var(--r-s);padding:6px 14px;font-size:15px;font-weight:700}
 .timeline{background:var(--surface);border:1px solid transparent;border-radius:var(--r-l);overflow:hidden}
-.item{position:relative;display:grid;grid-template-columns:72px 1fr 36px;gap:8px 10px;padding:13px 10px 13px 8px;border-top:1px solid var(--rule);align-items:start}
-.item::before{content:"";position:absolute;left:85px;top:0;bottom:0;width:1px;background:var(--rule)}   /* β1.6.63：時刻の列と内容の間に縦の細い線（時刻を目印に読めるように） */
+.item{position:relative;display:grid;grid-template-columns:60px 1fr;gap:8px 10px;padding:13px 10px 13px 8px;border-top:1px solid var(--rule);align-items:start}
+.item::before{content:"";position:absolute;left:73px;top:0;bottom:0;width:1px;background:var(--rule)}   /* β1.6.63：時刻の列と内容の間に縦の細い線（時刻を目印に読めるように） */
 .item.wide::before{display:none}
 .item:first-child{border-top:0}
-.item .t{font-weight:600;font-size:19px;color:var(--deep);line-height:1.45;font-variant-numeric:tabular-nums;letter-spacing:0;text-align:right;font-family:var(--fnum)}
+.item .t{font-weight:600;font-size:19px;color:var(--deep);line-height:1.45;font-variant-numeric:tabular-nums;letter-spacing:0;text-align:center;white-space:nowrap;font-family:var(--fnum)}   /* β1.6.83：列を72→60pxに狭く、真ん中ぞろえ */
+.item .t.long{font-size:13px;letter-spacing:-.05em}   /* β1.6.83：5文字以上（「アンケート」など）は少し小さく */
 .item .t.soft{font-family:inherit}
 .item .t.soft{font-size:14px;font-weight:700;color:var(--sub);padding-top:3px}
 .item .ttl{font-weight:700;line-height:1.5}
 .item .dt{font-size:16px;color:var(--sub);margin-top:2px}
-.item ol{margin:4px 0 0;padding-left:1.3em;font-size:16px}
+.item ol{margin:4px 0 0;padding-left:2.1em;font-size:16px}   /* β1.6.84：1. 2. 3. の数字が縦の線に重ならないよう、左の余白を広げた */
 .item.key{background:var(--amber-soft);box-shadow:inset 4px 0 0 var(--amber)}
 .sv .svq{font-weight:700;font-size:18px;margin-bottom:8px}
 .sv .svo{display:block;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-m);padding:10px 14px;margin-top:8px;font-size:17px;color:var(--ink)}
@@ -324,7 +325,7 @@ p{margin:0 0 10px}
 .sv .svo[aria-pressed="true"]::before{content:'✓ ';color:var(--deep)}
 #btnSurveySend:disabled{opacity:.5}
 .endbox h2{margin-top:0}
-#vEnded .item{grid-template-columns:72px 1fr}
+#vEnded .item{grid-template-columns:60px 1fr}
 .backtoday{margin:-4px 0 14px;background:#fff;border:2px solid #E8891A;color:#9A4A06;line-height:1.3}   /* β1.6.52：白地にオレンジ枠 */
 .backtoday small{display:block;font-size:15px;font-weight:700}
 .backtoday b{display:block;font-size:20px}
@@ -355,14 +356,13 @@ p{margin:0 0 10px}
 @media (prefers-reduced-motion: reduce){.bigbtn{animation:none}}
 .item.ng .ttl{color:var(--ng)}
 .item .go{margin-top:8px;display:inline-block;background:var(--surface);color:var(--deep);border:1.5px solid var(--deep);border-radius:var(--r-s);padding:5px 12px;font-size:15px;font-weight:700;line-height:1.4}   /* β1.6.63：説明を開くボタンは白地に枠（主役のボタンと強さを分ける） */
-/* β1.6.79：「済」のはんこ。押す前は灰色の点線の丸、押すと赤い丸に「済」 */
-.chk{width:34px;height:34px;border:0;background:transparent;padding:0;line-height:0;color:var(--chkOff)}
-.chk svg{width:34px;height:34px;display:block;overflow:visible}
-.chk .ring{fill:none;stroke:currentColor;stroke-width:2;stroke-dasharray:4 3}
-.chk text{font-size:18px;font-weight:700;fill:currentColor;opacity:0}
-.chk[aria-pressed="true"]{color:var(--chkOn)}
-.chk[aria-pressed="true"] .ring{stroke-width:2.5;stroke-dasharray:none}
-.chk[aria-pressed="true"] text{opacity:1}
+/* β1.6.85：右の丸（済）の列をなくして、項目をタップすると、文字に重なるように大きく「済」の印を出す */
+.readchk{display:flex;gap:12px;align-items:flex-start;margin:14px 2px 10px;font-size:16px;line-height:1.5;font-weight:700;cursor:pointer}
+.readchk input{width:28px;height:28px;flex:none;margin:0;accent-color:var(--deep)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.consentbtns{display:flex;gap:8px;margin:12px 0 4px;align-items:stretch}.consentbtns .btn{flex:1;margin:0!important;padding:10px 6px;font-size:15px}
+.item[data-chk]{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.item.done::after{content:"済";position:absolute;z-index:1;right:14px;top:50%;width:62px;height:62px;margin-top:-31px;box-sizing:border-box;border:4px solid var(--chkOn);border-radius:50%;color:var(--chkOn);font-size:38px;font-weight:700;line-height:54px;text-align:center;opacity:.8;transform:rotate(-10deg);pointer-events:none}
 .item.done .ttl,.item.done .dt{opacity:.55}
 
 /* 食事 */
@@ -597,10 +597,10 @@ p{margin:0 0 10px}
    大腸カメラ検査のご案内（患者用アプリ）  CSGUIDE
    ---------------------------------------------------------
    ★ 下の SETTINGS_URL に、設定用GASのウェブアプリURLを貼ってください（最初に1回だけ）。
-      設定（時刻・量・文章など）は「設定用アプリ」で変更します。このファイルは書き換え不要です。
+      設定（時刻・量・文章など）は「院内アプリ」で変更します。このファイルは書き換え不要です。
    ========================================================= */
 const SETTINGS_URL = 'https://script.google.com/macros/s/AKfycbzXTV9azDiKen8sN-_i34qIzseZAs-qZ1qc2zC9z0LoKDCmLetB0QzaUwVsQks4PfyqYA/exec';
-const APP_VERSION = 'β1.6.82';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
+const APP_VERSION = 'β1.6.98';   // 3つのアプリで1本の通し番号（このファイルは、中身を直したときだけ新しい版になる）
 
 // 設定の初期値（スプレッドシートに設定がないとき・読み込めないときに使う）
 const DEFAULT_CONFIG = {
@@ -620,7 +620,7 @@ const DEFAULT_CONFIG = {
 
   home:   { start:'09:00', arrive:'12:30' },   // 自宅で飲む人（検査時間がQRコード等で分からないときに使う）
   arriveBeforeExam: 30,            // 自宅で飲む人：来院は検査の何分前か（検査時間が分かるとき。飲み始めも同じだけずらす）
-  clinic: { arrive:'08:30' },                  // 院内で飲む人
+  clinic: { arrive:'08:50', start:'09:00' },   // 院内で飲む人（β1.6.88：来院8:50・飲み始め9:00ごろ。飲み方ナビも使える）
 
   method: '2-1',                   // 標準の飲み方（QRコードで指定がないとき）
   // 飲み方ごとの設定（スタッフ用QRコードで患者さんごとに切り替え。'standard'＝スタンダード法も指定可）
@@ -641,6 +641,7 @@ const DEFAULT_CONFIG = {
   intervalMin: 10,                 // それ以降の1杯ごとの間隔（分）
   tooFastMin: 5,                   // 前の1杯からこの時間（分）以内にモビプレップを飲んだら「速すぎる」と警告
   clearLevel: 4,                   // この段階以上（④うすい黄・⑤透明）なら終了
+  minStools: 5,                    // β1.6.89：必ず飲む分を飲み終えたとき、終了にするのに最低限必要な排便の回数
   okDrinks: ['水（ミネラルウォーターも可）','お茶（煎茶・麦茶・ウーロン茶など）','紅茶（砂糖・ミルクなし）'],
   ngDrinks: ['スポーツドリンク','乳製品（牛乳・飲むヨーグルトなど）','ジュース','アルコール','砂糖や粒などが入った飲み物'],
   thirstRule: 'のどが渇いたら、決められた量とは別に水やお茶を飲んでかまいません。ご高齢の方や脱水に注意が必要な方は、積極的に飲みましょう。',
@@ -723,7 +724,10 @@ const KEY = EVAL ? 'csguide_eval_v1' : DEMO ? 'csguide_demo_v1' : 'csguide_state
 const blankState = () => ({ date:'', examTime:'', schedAt:0, cancelled:false, place:'', checks:{}, drinks:[], stools:[], delStools:[], nextAt:0, stopMobi:false, allDone:false, checkDone:false, noStool:false, callAck:false, curDone:false, baseOK:false, baseCall:'', extraCall:false, extraAck:false, lastWaterInProg:false, code:'', method:'', updatedAt:0 });
 let S = blankState();
 function load(){ try{ const v = localStorage.getItem(KEY); if(v) S = Object.assign(S, JSON.parse(v)); }catch(e){} }
+// β1.6.92：評価版（スタッフ評価）では、仮の番号（EV＋5文字。本番の番号は6文字なので重ならない）で記録を院内アプリへ送る。「デモの記録」として別に表示される
+const evCode = () => 'EV' + Array.from({length:5}, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
 function save(){ if(PRACTICE) return;   // β1.6.35：練習のときは保存も送信もしない
+  if(EVAL && !/^EV[A-Z0-9]{5}$/.test(S.code || '')) S.code = evCode();
   S.updatedAt = Date.now(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} scheduleSync(); }
 // 患者さんの記録をスタッフ用に送る（番号付きのQRコードで開いたときだけ。名前などは送らない）
 let syncTimer = null;
@@ -736,7 +740,7 @@ const surveyUntil = () => ymdOf(addD(parseD(S.date), SURVEY_DAYS));
 const surveyOpen = () => !isEnded() || ymdOf(new Date()) <= surveyUntil();
 const consentOK = () => S.consent === true;
 const needConsent = () => (DEMO || !!S.code) && S.consent !== true && S.consent !== false && !isEnded();   // β1.6.27：お試し版でも同意の画面を出す（お試し版は何も送らない）
-function scheduleSync(){ if(DEMO || !SETTINGS_URL || !S.code || !consentOK() || isEnded()) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, 800); }
+function scheduleSync(){ if((DEMO && !EVAL) || !SETTINGS_URL || !S.code || !consentOK() || isEnded()) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, 800); }
 function stageText(){
   const i = S.drinks.length;
   if(S.allDone) return '終了';
@@ -752,15 +756,17 @@ function stageText(){
 function summaryForStaff(){
   const t = totals(), i = S.drinks.length, done = STEPS.slice(0, i);
   const last = S.stools.length ? S.stools[S.stools.length-1] : null;
-  return { date:S.date, examTime:S.examTime || '', schedAt:S.schedAt || 0, place:S.place, method:methodLabel(),
+  // β1.6.95：飲む場所・飲み方は、QRコードで院内が決めたもの（院内の予定表にある）ので送らない。評価版（予定表がない）だけ送る
+  return { date:S.date, examTime:S.examTime || '', schedAt:S.schedAt || 0, place:EVAL ? S.place : '', method:EVAL ? methodLabel() : '',
     mobiCups:done.filter(x=>x.kind==='m').length, waterCups:done.filter(x=>x.kind==='w').length,
     mobiMl:t.m, waterMl:t.w, stools:S.stools.map(x=>x.lv), stoolTimes:S.stools.map(x=>x.t),
     delStools:(S.delStools || []).map(x=>x.lv), delStoolTimes:(S.delStools || []).map(x=>x.t),
     lastLv:last ? last.lv : 0, lastStoolAt:last ? last.t : 0,
-    startedAt:S.drinks[0] || 0, lastDrinkAt:S.drinks[i-1] || 0, cancelled:!!S.cancelled, stage: S.cancelled ? '予約取り消し（アプリで案内済み）' : stageText() };
+    startedAt:S.drinks[0] || 0, lastDrinkAt:S.drinks[i-1] || 0, cancelled:!!S.cancelled, demo:EVAL || undefined, stage: S.cancelled ? '予約取り消し（アプリで案内済み）' : stageText() };
 }
 function syncNow(){
-  if(DEMO || !SETTINGS_URL || !S.code || !consentOK() || isEnded()) return;
+  sendConsentLog();   // β1.6.98：送れなかった同意の記録があれば、送り直す
+  if((DEMO && !EVAL) || !SETTINGS_URL || !S.code || !consentOK() || isEnded()) return;
   clearTimeout(syncTimer);
   let summary = {}; try{ summary = summaryForStaff(); }catch(e){}
   const st = Object.assign({}, S); delete st._pick;
@@ -779,7 +785,7 @@ async function fetchPatient(code){
   }catch(e){ return null; }
 }
 
-// 院内（内視鏡カレンダー）で予約が変わったとき：設定用アプリがGASに置いた予定を当てはめる
+// 院内（内視鏡カレンダー）で予約が変わったとき：院内アプリがGASに置いた予定を当てはめる
 // 戻り値：変わったかどうか
 const normTime = t => { const m = /^(\d{1,2}):?(\d{2})$/.exec(String(t || '').trim()); return m && Number(m[1]) < 24 && Number(m[2]) < 60 ? `${Number(m[1])}:${m[2]}` : ''; };
 function applySched(sc){
@@ -804,7 +810,7 @@ function RESET_PROGRESS(){ S.checks = {}; S.drinks = []; S.stools = []; S.delSto
 function schedNotice(){
   const sh = document.getElementById('sheet');
   const t = S.examTime ? `　検査 ${S.examTime}` : '';
-  const arr = S.place === 'home' ? `<p>来院は <b>${homeArrive()}</b>、モビプレップの飲み始めは <b>${homeStart()}</b> です。</p>` : S.place === 'clinic' ? `<p>来院は <b>${CONFIG.clinic.arrive}</b> です。</p>` : '';
+  const arr = S.place === 'home' ? `<p>来院は <b>${homeArrive()}</b>、モビプレップの飲み始めは <b>${homeStart()}</b> です。</p>` : S.place === 'clinic' ? `<p>来院は <b>${CONFIG.clinic.arrive}</b>、モビプレップの飲み始めは <b>${startTime()}</b> ごろです。</p>` : '';
   sh.innerHTML = `<h2>検査の予定が変わりました</h2><p style="font-size:20px"><b>${fmtD(parseD(S.date))}${esc(t)}</b></p>${arr}`
     + `<p class="muted">予定や食事の説明は、新しい日付に合わせて表示しています。</p>`
     + `<button type="button" class="btn" id="sClose" style="margin-top:8px">わかりました</button>`;
@@ -895,8 +901,10 @@ const homeStart = () => {
   if(isNaN(toMin(S.examTime))) return base;
   return fromMin(toMin(base) + toMin(homeArrive()) - toMin(CONFIG.home.arrive));
 };
-const finishEstimate = () => addMin(homeStart(), minutesTo(CHECK_AT));
-const extraEstimate  = () => addMin(homeStart(), minutesTo(EXTRA_AT));
+// β1.6.88：飲み始めの時刻（自宅は検査時間で変わる／院内は決まった時刻）
+const startTime = () => S.place === 'clinic' ? (CONFIG.clinic.start || '09:00') : homeStart();
+const finishEstimate = () => addMin(startTime(), minutesTo(CHECK_AT));
+const extraEstimate  = () => addMin(startTime(), minutesTo(EXTRA_AT));
 
 /* ---------- スケジュール ---------- */
 function buildDays(){
@@ -931,8 +939,10 @@ function buildDays(){
     day.push({ id:'e4c', t:'飲む前', title:'モビプレップの飲み方と注意事項を確認する', gos:[{ go:'vRule', label:'飲み方を見る' }, { go:'vCaution', label:'服用時の注意点を見る' }] });
     day.push({ id:'e5', t:homeStart(), title:'実際にモビプレップを飲み始めましょう', dt:`飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, key:true, big:true, go:'vNav', goLabel:'飲み始める' });
     day.push({ id:'e6', t:'', wide:true, title:`${homeArrive()}に来院してください`, dt: S.examTime ? `検査は${S.examTime}からです` : '', key:true });
-  }else{
-    day.push({ id:'e6', t:'', wide:true, title:`${CONFIG.clinic.arrive}に来院してください`, dt:'モビプレップは院内で、看護師の案内に沿って飲みます' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), key:true });
+  }else{   // β1.6.88：院内で飲む人も、飲み方の確認と飲み方ナビが使える
+    day.push({ id:'e4c', t:'来院前', title:'モビプレップの飲み方と注意事項を確認する', gos:[{ go:'vRule', label:'飲み方を見る' }, { go:'vCaution', label:'服用時の注意点を見る' }] });
+    day.push({ id:'e6', t:'', wide:true, title:`${CONFIG.clinic.arrive}に来院してください`, dt:'受付をすませて、看護師に声をかけてください' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), key:true });
+    day.push({ id:'e5', t:startTime(), title:'院内でモビプレップを飲み始めます', dt:`看護師の案内に沿って飲みます。飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, key:true, big:true, go:'vNav', goLabel:'飲み始める' });
   }
   day.push({ id:'e7', t:'持ち物', title:'忘れ物はありませんか', steps:['保険証','お薬手帳','検査説明用紙・同意書・予約票','500mLの水かお茶','汚れたとき用の下着やズボン'] });
   day.push({ id:'e8', t:'服装', title:'アクセサリーなど貴金属は外してくる', dt:'ジェルネイルは落とさなくて大丈夫です' });
@@ -1000,15 +1010,15 @@ function renderSchedule(){
         + `</div></div><div class="timeline">`;   // β1.6.18：右の丸い「›」はなし
       return;
     }
-    h += `<div class="item${it.key?' key':''}${it.ng?' ng':''}${it.wide?' wide':''}${done?' done':''}">`
-      + (it.wide ? '' : `<div class="t${soft?' soft':''}">${esc(it.t)}</div>`) + `<div>`
+    h += `<div class="item${it.key?' key':''}${it.ng?' ng':''}${it.wide?' wide':''}${done?' done':''}"${it.wide ? '' : ` data-chk="${it.id}"`}>`
+      + (it.wide ? '' : `<div class="t${soft?' soft':''}${soft && String(it.t).length >= 5 ? ' long' : ''}">${esc(it.t)}</div>`) + `<div>`
       + `<div class="ttl">${esc(it.title)}</div>`
       + (it.dt ? `<div class="dt">${esc(it.dt)}</div>` : '')
       + (it.steps && it.steps.length ? `<ol>${it.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>` : '')
       + (it.go ? `<button type="button" class="go" data-go="${it.go}">${esc(it.goLabel || '詳しく見る')}</button>` : '')
       + (it.tel ? `<div class="itel">${telBtn()}</div>` : '')
       + (it.gos ? `<div class="gos">${it.gos.map(g=>`<button type="button" class="go" data-go="${g.go}">${esc(g.label)}</button>`).join('')}</div>` : '')
-      + `</div>` + (it.wide ? '' : `<button type="button" class="chk" data-chk="${it.id}" aria-pressed="${done}" aria-label="済み">${CHK_MARK}</button>`) + `</div>`;   // β1.6.22：来院の文はチェックなし
+      + `</div></div>`;   // β1.6.22：来院の文はチェックなし（β1.6.85：項目をタップして「済」の印をつける）
   });
   h += `</div></div>`;
 
@@ -1112,32 +1122,62 @@ function renderA2hs(env){
 
 /* ---------- 記録の取り扱いへの同意（β1.6.26） ---------- */
 let consentNext = null;   // 初めて開いたとき：同意のあとに進む先
+// β1.6.98：同意の画面の本文（ボタンや今の状態は含まない）。「同意した文」の記録にも、同じものを使う
+const CONSENT_CHECK = '上の内容と、「記録の送り方」「記録の取り扱い」を読みました';
+const consentBodyHTML = () => `<p>このアプリでは、患者さんから当院へお問い合わせの電話があったときに、状況をすばやく把握して対応できるように、次の記録を当院へ送ります。</p>`
+  + `<ul class="list"><li>モビプレップと水・お茶を飲んだ杯数と時刻</li><li>トイレの記録（便の色の段階と時刻。取り消した記録も含みます）</li><li>検査日・検査時間</li></ul>`
+  + `<p><b>飲んだ回数や便の記録を見て、当院から患者さんへ電話などでご連絡することはありません。</b></p>`
+  + `<p><b>お名前や患者IDなど、あなたが誰かが分かる情報は送りません。</b></p>`
+  + `<p>同意しない場合もこのアプリはそのまま使えます。その場合、検査後のアンケート（任意）の情報以外は当院へは送られません。</p>`;
+const sendHowHTML = ex => `<p>記録は「このアプリ用の番号」で管理します。この番号は、お渡しした紙のQRコードの下に印刷されている、英字と数字の6文字（例：${esc(ex)}）です。今回の検査のために作った番号で、診察券の番号やお名前とは関係がないため、番号だけでは誰の記録か分かりません。</p>`;
+const handlingHTML = () => `<p>記録はGoogleのサービス（スプレッドシート）に保存し、<b>検査の日が終わる（日付が変わる）と、自動で消えます。</b></p>`
+  + `<p>ただし、同意した日時と同意をやめた日時の記録（アプリ用の番号・日時・同意した文の版）は、同意の確認のため、<b>1年間</b>保存します。</p>`
+  + `<p>あとから変えるときは、「検査までの予定」の画面のいちばん下にある「記録の送信について」から変えられます。</p>`;
 function consentHTML(){
   const first = needConsent();
   const now = S.consent === true ? '今は「同意する」になっています。' : S.consent === false ? '今は「同意しない」になっています（記録は当院へ送られていません）。' : '';
   return ``
     + `<div class="panel consent">`
-    + `<p>このアプリでは、下剤がうまく効いているかを当院で確かめ、必要なときにご連絡できるように、次の記録を当院へ送ります。</p>`
-    + `<ul class="list"><li>モビプレップと水・お茶を飲んだ杯数と時刻</li><li>トイレの記録（便の色の段階と時刻。取り消した記録も含みます）</li><li>検査日・検査時間・下剤を飲む場所・飲み方</li></ul>`
-    + `<p>送った記録は、当院のスタッフが確認します。</p>`
-    + `<p><b>お名前や患者IDなど、あなたが誰かが分かる情報は送りません。</b></p>`
-    + `<p>記録は「このアプリ用の番号」で管理します。この番号は、お渡しした紙のQRコードの下に印刷されている、英字と数字の6文字（例：${esc(S.code && !DEMO ? S.code : 'K7MQ2X')}）です。今回の検査のために作った番号で、診察券の番号やお名前とは関係がないため、番号だけでは誰の記録か分かりません。</p>`
-    + `<p>記録はGoogleのサービス（スプレッドシート）に保存し、<b>検査の日が終わる（日付が変わる）と、自動で消えます。</b></p>`
-    + `<p>同意しない場合も、このアプリはそのまま使えます。ただし、記録は当院へ送られず、このスマホの中だけに残ります。</p>`
-    + (DEMO ? `<p class="demonote">お試し版では、どちらを選んでも記録は送られません。</p>` : '')
-    + `<p class="muted" style="margin:0">あとから変えるときは、「検査までの予定」の画面のいちばん下にある「記録の送信について」から変えられます。</p>`
+    + consentBodyHTML()
+    + `<div class="consentbtns"><button type="button" class="btn sub" id="btnSendHow">記録の送り方</button><button type="button" class="btn sub" id="btnHandling">記録の取り扱い</button></div>`   // β1.6.95：長い説明は、ボタンを押すと読めるようにまとめた
+    + (EVAL ? `<p class="demonote">評価版です。「同意する」を選ぶと、押した記録が、院内アプリの「デモの記録」に表示されます（本番の患者さんの記録とは別です。14日たつと自動で消えます）。「同意しない」を選ぶと送られません。</p>`
+      : DEMO ? `<p class="demonote">お試し版では、どちらを選んでも記録は送られません。</p>` : '')
     + `</div>`
     + (now ? `<p class="muted">${now}</p>` : '')
-    + `<button type="button" class="btn" id="btnConsentYes">同意する</button>`
+    + `<label class="readchk"><input type="checkbox" id="readChk"><span>${CONSENT_CHECK}</span></label>`   // β1.6.98：チェックを入れると「同意する」が押せる
+    + `<button type="button" class="btn" id="btnConsentYes" disabled>同意する</button>`
     + `<button type="button" class="btn sub" id="btnConsentNo">同意しない（記録を送らない）</button>`
     + (first ? '' : backBtn());
 }
+// β1.6.95：「記録の送り方」「記録の取り扱い」の説明（ボタンを押すと開く）
+function openInfo(title, html){
+  const sh = document.getElementById('sheet');
+  sh.innerHTML = `<h2 style="margin:0 0 8px">${title}</h2>` + html + `<button type="button" class="btn" id="infoClose" style="margin-top:12px">閉じる</button>`;
+  document.getElementById('ov').classList.remove('hidden');
+  document.getElementById('infoClose').onclick = closeSheet;
+}
+// β1.6.98：同意の記録（番号・日時・同意した文の版）をGASに残す。文の版は、文の中身から決まる番号（文を直すと、自動で新しい番号になる）
+const plainText = html => html.replace(/<li>/g, '・').replace(/<\/(p|li|h2)>/g, '\n').replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/\n{2,}/g, '\n').trim();
+const consentTextPlain = () => plainText(consentBodyHTML()) + '\n\n【記録の送り方】\n' + plainText(sendHowHTML('K7MQ2X')) + '\n\n【記録の取り扱い】\n' + plainText(handlingHTML()) + '\n\n【確認の欄】' + CONSENT_CHECK;
+const fnv = t => { let h = 0x811c9dc5; for(let k = 0; k < t.length; k++){ h ^= t.charCodeAt(k); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
+const consentVer = () => 'C' + fnv(consentTextPlain());
+function sendConsentLog(){
+  const c = S.consentLog;
+  if(!c || !c.pending || !SETTINGS_URL || !S.code || DEMO) return Promise.resolve();
+  const at = c.at;
+  return fetch(SETTINGS_URL, { method:'POST', keepalive:true, body: JSON.stringify({ action:'consentLog', code:S.code, textVer:c.ver, text:c.text, via:c.via, appVer:APP_VERSION, clientAt:at, checked:true }) })
+    .then(r => r.json()).then(j => { if(j && j.ok && S.consentLog && S.consentLog.at === at){ S.consentLog = { at:at, ver:c.ver, via:c.via, pending:false }; save(); } }).catch(() => {});   // 送れなかったときは、あとで自動で送り直す
+}
 function setConsent(ok){
-  const was = S.consent;
-  S.consent = ok; S.consentAt = Date.now(); save();   // 同意したときは、ここで記録が送られる
-  // 同意をやめたとき：これまでに送った記録を、当院の記録から消してもらう
-  if(!ok && was === true && SETTINGS_URL && S.code && !DEMO){
-    try{ fetch(SETTINGS_URL, { method:'POST', keepalive:true, body: JSON.stringify({ action:'withdraw', code:S.code }) }).catch(()=>{}); }catch(e){}
+  const was = S.consent, via = consentNext ? '最初の同意' : 'あとから変更';
+  S.consent = ok; S.consentAt = Date.now();
+  if(ok && !DEMO){ S.consentVer = consentVer(); S.consentLog = { at:Date.now(), ver:S.consentVer, via:via, text:consentTextPlain(), pending:true }; }   // 同意したときだけ記録を残す（同意しなかった人の記録は取らない）
+  save();   // 同意したときは、ここで記録が送られる
+  if(ok) sendConsentLog();
+  // 同意をやめたとき：これまでに送った記録を、当院の記録から消してもらう（同意をやめた日時は、同意ログに残る）
+  if(!ok && was === true && SETTINGS_URL && S.code && (!DEMO || EVAL)){
+    const wd = () => { try{ fetch(SETTINGS_URL, { method:'POST', keepalive:true, body: JSON.stringify({ action:'withdraw', code:S.code, textVer:S.consentVer || '', appVer:APP_VERSION, clientAt:Date.now() }) }).catch(()=>{}); }catch(e){} };
+    (S.consentLog && S.consentLog.pending ? sendConsentLog() : Promise.resolve()).then(wd, wd);
   }
   if(consentNext){ const f = consentNext; consentNext = null; return f(); }
   goBack();
@@ -1237,10 +1277,8 @@ document.addEventListener('input', e => { const t = e.target; if(t && t.dataset 
   const b = document.getElementById('btnEvalSend'); if(b){ const ok = evReady(); b.disabled = !ok; b.textContent = ok ? '評価を送る' : (EV.role ? '評価か気づいたことを1つ以上書くと送れます' : '職種を選ぶと送れます'); } } });
 
 /* ---------- 検査のあと（検査日の翌日から。β1.6.33） ---------- */
-// β1.6.75：「最初からやり直す」は、試作版（設定の「試作版です」の表示が入っている）で、パソコンのときだけ
-const pcResetOK = () => !!CONFIG.prototype && a2hsEnv() === 'pc';
-// β1.6.79：チェックの印（「済」のはんこ）
-const CHK_MARK = `<svg viewBox="0 0 36 36" aria-hidden="true"><circle class="ring" cx="18" cy="18" r="15"/><text x="18" y="24.6" text-anchor="middle">済</text></svg>`;
+// β1.6.75：「最初からやり直す」は、試作版（設定の「試作版です」の表示が入っている）のときだけ（β1.6.86：スマホでも出す）
+const pcResetOK = () => !!CONFIG.prototype;   // β1.6.86：iPhone・Androidでも出す（試作版のときだけ。正式版は出ない）
 function endedHTML(){
   const u = parseD(surveyUntil());
   let h = `<div class="panel endbox"><h2>検査おつかれさまでした</h2><p style="margin:0">このアプリでの検査の準備のご案内は終わりました。ご利用ありがとうございました。</p></div>`
@@ -1248,10 +1286,10 @@ function endedHTML(){
     + `<div class="item"><div class="t soft">帰宅後</div><div><div class="ttl">検査後の過ごし方</div><button type="button" class="go" data-go="vAfter">詳しく見る</button></div></div>`
     + `<div class="item"><div class="t soft">困ったら</div><div><div class="ttl">お腹の痛みが続く・赤い便が出るときは連絡</div><div class="itel">${telBtn()}</div></div></div>`;
   if(surveyOpen()) h += S.surveyDone
-    ? `<div class="item"><div class="t soft">アンケート</div><div><div class="ttl">アンケートへのご協力、ありがとうございました</div></div></div>`
-    : `<div class="item"><div class="t soft">アンケート</div><div><div class="ttl">このアプリのアンケートにご協力ください</div><div class="dt">4つの質問に答えるだけです（${u.getMonth()+1}月${u.getDate()}日まで）</div><button type="button" class="go" data-go="vSurvey">答える</button></div></div>`;
+    ? `<div class="item"><div class="t soft long">アンケート</div><div><div class="ttl">アンケートへのご協力、ありがとうございました</div></div></div>`
+    : `<div class="item"><div class="t soft long">アンケート</div><div><div class="ttl">このアプリのアンケートにご協力ください</div><div class="dt">4つの質問に答えるだけです（${u.getMonth()+1}月${u.getDate()}日まで）</div><button type="button" class="go" data-go="vSurvey">答える</button></div></div>`;
   h += `</div>`;
-  if(pcResetOK()) h += `<div style="text-align:center;margin-top:18px"><button type="button" class="linkbtn" id="btnPcReset">最初からやり直す（試作版・パソコンのみ）</button></div>`;   // β1.6.75：試作版のときだけ。正式版は翌日から使えない
+  if(pcResetOK()) h += `<div style="text-align:center;margin-top:18px"><button type="button" class="linkbtn" id="btnPcReset">最初からやり直す（試作版のみ）</button></div>`;   // β1.6.75：試作版のときだけ。正式版は翌日から使えない
   return h;
 }
 
@@ -1279,7 +1317,8 @@ function beforeHTML(){
       + row(homeStart(), 'モビプレップを飲み始める', `${methodLabel()}で飲みます。飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, true)
       + row(homeArrive(), '来院する', S.examTime ? `検査は${S.examTime}からです` : '', true);
   }else{
-    h += row(CONFIG.clinic.arrive, '来院する', 'モビプレップは院内で、看護師の案内に沿って飲みます' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), true);
+    h += row(CONFIG.clinic.arrive, '来院する', '受付をすませて、看護師に声をかけてください' + (S.examTime ? `（検査は${S.examTime}からの予定です）` : ''), true)
+      + row(startTime(), '院内でモビプレップを飲み始める', `${methodLabel()}で、看護師の案内に沿って飲みます。飲み終わりの目安は ${finishEstimate()} ごろ（追加分まで飲むと ${extraEstimate()} ごろ）`, true);   // β1.6.88
   }
   h += `</div><div class="gos">`
     + (home ? `<button type="button" class="go" data-go="vPrep">モビプレップの作り方</button>` : '')   // β1.6.52：作り方を左に
@@ -1403,26 +1442,26 @@ function progressHTML(t, i){
     + `</div>`;
 }
 const stoolBtns = last => STOOL.map((x,k)=>`<button type="button" data-stool="${k+1}" class="${last&&last.lv===k+1?'last':''}"><span class="sw" style="background:${x.c}"></span><span class="n">${x.n}</span><br>${x.label}${x.note ? `<span class="sn${x.ok?' ok':''}">${x.note}</span>` : ''}</button>`).join('');
-function checkpointHTML(){
-  if(S.stools.length) return askToiletHead()   // β1.6.77：記録が①〜③まで
-    + `<button type="button" class="btn" id="btnCheck">${IC_WC}トイレに行った</button>`
-    + `<button type="button" class="btn sub" id="btnNotGone">トイレに行っていない</button>`
-    + `<button type="button" class="btn sub" id="btnPain">お腹が痛い・吐き気がある・吐いた</button>`;
-  return `<div class="stage go"><div class="mark">!</div><b>必ず飲む分を飲み終わりましたが、まだトイレの記録がありません</b></div>`
-    + `<p class="say">便が出ていたら、「トイレに行った」から便の色を記録してください。</p>`
-    + `<button type="button" class="btn" id="btnCheck">${IC_WC}トイレに行った</button>`
-    + `<button type="button" class="btn sub" id="btnNoStool">まだ便が出ていない</button>`
+function checkpointHTML(){   // β1.6.89：必ず飲む分を飲み終わったあと、便の確認が済むまで
+  const n = S.stools.length, min = minStools();
+  return `<div class="stage go"><div class="mark">?</div><b>必ず飲む分を飲み終わりました</b></div>`
+    + `<p class="say">${n < min ? `トイレの記録は${n}回です。記録を忘れていないか、確認してください。` : '最後の記録のあとに、トイレに行ったか確認してください。'}</p>`
+    + `<button type="button" class="btn" id="btnBaseCheck">便の確認をする</button>`
     + `<button type="button" class="btn sub" id="btnPain">お腹が痛い・吐き気がある・吐いた</button>`;
 }
+// β1.6.91：院内で飲んでいる人には、電話番号ではなく「看護師に声をかけてください」を出す
+const inClinic = () => S.place === 'clinic';
+const contactTel = () => inClinic() ? '' : telBtn();
 function callHTML(kind){
   const why = kind === 'extra' ? `追加分（${EXTRA.text}）を飲んでも、まだ便が④・⑤になっていません。`
     : S.baseCall === 'pain' ? `お腹の痛み・吐き気・嘔吐があるとのことです。`
     : `${BASE.text}を飲んでも、まだ便が出ていません。`;
-  return `<div class="stage ng"><div class="mark">!</div><b>モビプレップを飲むのをやめて、当院へ電話してください</b></div>`
-    + `<p class="say">${why}<b>当院へ電話して</b>、このあとどうするか確認してください。</p>`
-    + telBtn()
-    + `<p class="muted" style="margin-top:12px">当院から「続けて飲む」ように言われたら、下のボタンを押してください。</p>`
-    + `<button type="button" class="btn sub" id="btnCallAck">電話で指示を受けたので、続けて飲む</button>`
+  const cl = inClinic();
+  return `<div class="stage ng"><div class="mark">!</div><b>${cl ? 'モビプレップを飲むのをやめて、看護師に声をかけてください' : 'モビプレップを飲むのをやめて、当院へ電話してください'}</b></div>`
+    + `<p class="say">${why}${cl ? '<b>看護師に声をかけて</b>' : '<b>当院へ電話して</b>'}、このあとどうするか確認してください。</p>`
+    + contactTel()
+    + `<p class="muted" style="margin-top:12px">${cl ? '看護師から' : '当院から'}「続けて飲む」ように言われたら、下のボタンを押してください。</p>`
+    + `<button type="button" class="btn sub" id="btnCallAck">${cl ? '看護師から' : '電話で'}指示を受けたので、続けて飲む</button>`
     + `<button type="button" class="btn toilet" id="btnToilet">${IC_WC}トイレに行った</button>` + SICK_BTN + ``;
 }
 // β1.6.77：必ず飲む分を飲み終わったとき、記録が①〜③までなら「トイレに行きましたか？」
@@ -1461,9 +1500,8 @@ function renderNav(){
   const lastStool = S.stools.length ? S.stools[S.stools.length-1] : null;
   let h = `<h2>当日の飲み方ナビ</h2>`;
   if(PRACTICE) h += `<div class="practice"><b>デモ版</b>です（今日は検査の当日ではありません）。ここで押した記録は保存されず、当院へも送られません。検査の当日に開くと、本番の記録になります。<button type="button" class="linkbtn" id="btnPracticeReset">デモ版を最初からやり直す</button></div>`;   // β1.6.35
-  if(S.place === 'clinic') h += `<div class="note">院内で飲む方は、看護師がご案内します。この画面は便の記録にも使えます。</div>`;
-  // β1.6.4：使い方の説明は、押すと開くようにしまっておく
-  else h += `<details class="howto" id="navHow"${navHowOpen ? ' open' : ''}><summary>この画面の使い方</summary><div>「飲み始める」を押すと、コップの絵の中身が少しずつ減っていきます。絵に合わせてゆっくり飲み、飲み終わったら「飲み終わった」を押してください。動画を見るなど、ほかの画面に切り替えても大丈夫です。戻ってくると、続きから使えます。</div></details>`;
+  // β1.6.4：使い方の説明は、押すと開くようにしまっておく（β1.6.88：院内で飲む人にも出す）
+  h += `<details class="howto" id="navHow"${navHowOpen ? ' open' : ''}><summary>この画面の使い方</summary><div>「飲み始める」を押すと、コップの絵の中身が少しずつ減っていきます。絵に合わせてゆっくり飲み、飲み終わったら「飲み終わった」を押してください。動画を見るなど、ほかの画面に切り替えても大丈夫です。戻ってくると、続きから使えます。${S.place === 'clinic' ? '困ったときは、看護師に声をかけてください。' : ''}</div></details>`;
 
   h += `<div class="panel">` + progressHTML(t, i);
   if(S.allDone) h += doneHTML();
@@ -1602,28 +1640,60 @@ function lastWaterHTML(){
     + undoClearBtn();
 }
 // β1.6.74：お腹が痛い・吐き気があると押したあとに終わったときの一文
-const PAIN_NOTE = `<p class="say">お腹の痛みや吐き気がある場合は、当院へ連絡してください。</p>`;
+const painNote = () => `<p class="say">お腹の痛みや吐き気がある場合は、${inClinic() ? '看護師に声をかけて' : '当院へ連絡して'}ください。</p>`;
 // すべて終了
 function doneHTML(){
   const arrive = S.place === 'home' ? `<p class="arr"><b>${homeArrive()}</b> に来院してください。</p>` : `<p class="arr">看護師に声をかけてください。</p>`;   // β1.6.11：大きく表示
   return `<div class="stage ok"><div class="mark">✓</div><b>下剤はこれで終わりです。おつかれさまでした。</b></div>`
     + `<div class="donebox">${arrive}</div>`
-    + (S.baseCall === 'pain' && !S.callAck ? PAIN_NOTE + telBtn() : '')   // β1.6.74
+    + (S.baseCall === 'pain' && !S.callAck ? painNote() + contactTel() : '')   // β1.6.74
     + undoClearBtn();
 }
 // 全部飲んでもきれいにならない
 function notClearAllHTML(){
   return `<div class="stage ng"><div class="mark">!</div><b>全部飲み終わりましたが、便がまだきれいになっていません</b></div>`
-    + `<p>このあとどうするか、当院へ電話して確認してください。</p>` + telBtn();
+    + `<p>このあとどうするか、${inClinic() ? '看護師に声をかけて' : '当院へ電話して'}確認してください。</p>` + contactTel();
 }
 // 便の記録を受けて、このあとどうするかを決める
+// β1.6.89：必ず飲む分の終わりの確認（排便の回数が足りているか）
+const minStools = () => Number(CONFIG.minStools) || 5;
+let bq = { countOK:null };   // 確認の途中経過（true：5回以上と答えた／false：足りないと答えた／null：記録の回数で見る）。閉じたら最初から
+const countOK = () => bq.countOK === true ? true : bq.countOK === false ? false : S.stools.length >= minStools();
+function openBaseCheck(step){
+  const sh = document.getElementById('sheet'), n = S.stools.length, min = minStools();
+  if(!step) step = n < min ? 'forgot' : 'toilet';
+  const stage = t => `<div class="stage go"><div class="mark">?</div><b>${t}</b></div>`;
+  const later = `<button type="button" class="linkbtn" id="spLater" style="display:block;margin:6px auto 0">あとで</button>`;
+  const painBtn = `<button type="button" class="btn sub" id="btnPain">お腹が痛い・吐き気がある・吐いた</button>`;
+  let h = '';
+  if(step === 'forgot'){
+    h = stage('必ず飲む分を飲み終わりました')
+      + `<p class="say">${n ? `トイレの記録は<b>${n}回</b>です。` : 'トイレの記録が<b>まだありません</b>。'}ここまでに、ふつう<b>${min}回以上</b>は便が出ます。<b>記録を忘れていませんか？</b></p>`
+      + `<button type="button" class="btn" id="btnForgotYes">忘れていた</button>`
+      + (n ? `<button type="button" class="btn sub" id="btnForgotNo">忘れていない（記録のとおり）</button>` : `<button type="button" class="btn sub" id="btnNoStool">忘れていない（まだ便が出ていない）</button>`)
+      + painBtn + later;
+  }else if(step === 'count'){
+    h = stage('これまでの排便は、全部で何回ありましたか？') + `<p class="say">記録していない分も数えてください。</p>`
+      + `<button type="button" class="btn" id="btnCnt5">${min}回以上</button>`
+      + `<button type="button" class="btn sub" id="btnCntLt">1〜${min-1}回</button>`
+      + `<button type="button" class="btn sub" id="btnNoStool">まだ出ていない</button>` + later;
+  }else if(step === 'color'){
+    h = stage('最後の便の色は、どれでしたか？') + `<p class="say">いちばん近いものを押してください。</p><div class="stool big">${stoolBtns(null)}</div>` + later;
+  }else{   // toilet：最後の記録のあとに、トイレに行ったか
+    h = askToiletHead() + `<div class="stool big">${stoolBtns(null)}</div>`
+      + `<button type="button" class="btn sub" id="btnNotGone" style="margin-top:12px">トイレに行っていない</button>` + painBtn + later;
+  }
+  sh.innerHTML = h;
+  document.getElementById('ov').classList.remove('hidden');
+  document.getElementById('spLater').onclick = closeSheet;
+}
 function judgeStool(lv){
   const i = S.drinks.length, inProg = i > 0 && !S.curDone, cur = STEPS[i-1];
   if(S.baseCall === 'nostool' && !S.callAck){ S.baseCall = ''; }      // 便が出たので、改めて判断
   if(!pastBase()) return isClear(lv) ? 'baseContinue' : 'continue';   // 必ず飲む分の途中：きれいになっても続ける
-  if(!baseJudged()){                                                 // 必ず飲む分を飲み終えたところ
-    if(isClear(lv)){ S.allDone = true; return 'doneBase'; }
-    S.baseOK = true; return 'toExtra';
+  if(!baseJudged()){                                                 // 必ず飲む分を飲み終えたところ：最後の記録の色と、排便の回数で判断（途中の④・⑤は関係しない）
+    if(isClear(lv) && countOK()){ S.allDone = true; return 'doneBase'; }
+    S.baseOK = true; return isClear(lv) ? 'toExtraCount' : 'toExtra';
   }
   if(S.baseCall === 'pain' && !S.callAck && isClear(lv)){ S.allDone = true; return 'painDone'; }   // β1.6.74：お腹が痛いのあとに④・⑤→終わり
   if(S.baseCall && !S.callAck) return 'callBase';                    // 電話の案内中は、それを優先
@@ -1650,6 +1720,10 @@ function openStoolResult(lv, res){
       h = ok('便がきれいになってきました') + `<p class="say">いい感じです。お腹の痛みや吐き気がなければ、<b>必ず飲む分（${BASE.text}）まで続けて飲みましょう。</b></p>`; break;
     case 'doneBase':
       h = ok('便がきれいになりました') + `<p class="say">必ず飲む分を飲み終わっているので、<b>モビプレップはここで終わりです。</b></p>`; break;
+    case 'toExtraCount':   // β1.6.89：便の色はきれいでも、排便の回数が足りないとき
+      h = go('排便の回数が、まだ足りません') + `<p class="say">便の色はきれいですが、排便が${minStools()}回に届いていません。<b>追加で ${EXTRA.text} を飲みましょう。</b>④（うすい黄）か⑤（透明）になったら、その時点で終わりです。</p>`
+        + `<p class="muted">お腹の痛み・吐き気・嘔吐があるときは、飲むのをやめて下のボタンを押してください。</p>`
+        + `<button type="button" class="btn sub" id="btnPain">お腹が痛い・吐き気がある・吐いた</button>`; break;
     case 'toExtra':
       h = go('まだきれいになっていません') + `<p class="say"><b>追加で ${EXTRA.text} を飲みましょう。</b>④（うすい黄）か⑤（透明）になったら、その時点で終わりです。</p>`
         + `<p class="muted">お腹の痛み・吐き気・嘔吐があるときは、飲むのをやめて下のボタンを押してください。</p>`
@@ -1660,13 +1734,13 @@ function openStoolResult(lv, res){
     case 'doneExtra':
       h = ok('便がきれいになりました') + `<p class="say">水・お茶まで飲み終わっているので、<b>これで下剤は終わりです。</b></p>`; break;
     case 'painDone':   // β1.6.74
-      h = ok('便はきれいになりました') + `<p class="say">必ず飲む分を飲み終わっているので、<b>モビプレップはここで終わりです。</b></p>` + PAIN_NOTE; break;
+      h = ok('便はきれいになりました') + `<p class="say">必ず飲む分を飲み終わっているので、<b>モビプレップはここで終わりです。</b></p>` + painNote(); break;
     case 'callBase': case 'callExtra': case 'notClearAll':
       if(isClear(lv)){   // β1.6.71：④・⑤なのに「まだきれいになっていません」と出ていた（お腹の痛み・吐き気で電話の案内中のとき）
         h = ok('便はきれいになりました')   // β1.6.72：電話の文は出さない（院長の指示）
           + (pastBase() ? `<p class="say">必ず飲む分を飲み終わっているので、<b>モビプレップはここで終わりです。</b></p>` : ''); break;   // β1.6.73
       }
-      h = ng('まだきれいになっていません') + `<p class="say"><b>当院へ電話して</b>、このあとどうするか確認してください。</p><p class="muted">電話番号は、このあとの画面に表示します。</p>`; break;
+      h = ng('まだきれいになっていません') + (inClinic() ? `<p class="say"><b>看護師に声をかけて</b>、このあとどうするか確認してください。</p>` : `<p class="say"><b>当院へ電話して</b>、このあとどうするか確認してください。</p><p class="muted">電話番号は、このあとの画面に表示します。</p>`); break;
     default:
       h = go('まだきれいになっていません') + `<p class="say"><b>モビプレップを続けて飲みましょう。</b>${pastBase() ? '④（うすい黄）か⑤（透明）になったら終わりです。' : `まずは必ず飲む分（${BASE.text}）まで飲みます。`}</p>`;
   }
@@ -1806,7 +1880,7 @@ function renderSetup(){
   renderCal();
   document.querySelectorAll('#vSetup .choice').forEach(b => b.setAttribute('aria-pressed', b.dataset.place === S.place));
   document.getElementById('homeNote').textContent = `${homeStart()}から飲み始め`;
-  document.getElementById('clinicNote').textContent = `${CONFIG.clinic.arrive}に来院`;
+  document.getElementById('clinicNote').textContent = `${CONFIG.clinic.arrive}に来院・${startTime()}ごろ飲み始め`;
   document.getElementById('setupErr').textContent = '';
 }
 
@@ -1814,8 +1888,8 @@ function renderSetup(){
 function openSick(){
   const sh = document.getElementById('sheet');
   sh.innerHTML = `<h2>気分が悪い・お腹が痛いとき</h2>`
-    + `<p>次のようなときは、<b>すぐに飲むのをやめて</b>、当院にお電話ください。</p><ul class="stoplist cols">${CONFIG.stopSigns.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`
-    + `<a class="tel" href="tel:${esc(CONFIG.phone.replace(/[^\d]/g,''))}">${IC_TEL}${esc(CONFIG.phone)}</a>`
+    + `<p>次のようなときは、<b>すぐに飲むのをやめて</b>、${inClinic() ? '看護師に声をかけてください' : '当院にお電話ください'}。</p><ul class="stoplist cols">${CONFIG.stopSigns.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`
+    + contactTel()
     + `<p class="muted" style="margin-top:12px">少し気分が悪い程度なら、飲むペースをゆっくりにして様子をみてください。</p>`
     + `<button type="button" class="btn sub" id="sClose" style="margin-top:8px">閉じる</button>`;
   document.getElementById('ov').classList.remove('hidden');
@@ -1827,8 +1901,8 @@ function openCallNotice(kind){
   const sh = document.getElementById('sheet');
   sh.innerHTML = `<div class="stage ng"><div class="mark">!</div><b>${kind === 'extra' ? '追加分を飲み終わりました' : '必ず飲む分を飲み終わりました'}</b></div>`
     + (x ? `<div class="pick"><span style="background:${x.c}"></span>最後の記録：${x.n} ${x.label}（${hm(last.t)}）</div>` : '')
-    + `<p class="say">まだ④・⑤になっていません。<b>当院へ電話して</b>、このあとどうするか確認してください。</p>`
-    + `<p class="muted">電話番号は、このあとの画面に表示します。</p>`
+    + (inClinic() ? `<p class="say">まだ④・⑤になっていません。<b>看護師に声をかけて</b>、このあとどうするか確認してください。</p>`
+        : `<p class="say">まだ④・⑤になっていません。<b>当院へ電話して</b>、このあとどうするか確認してください。</p><p class="muted">電話番号は、このあとの画面に表示します。</p>`)
     + `<button type="button" class="btn" id="cnOk" style="margin-top:12px">わかりました</button>`;
   document.getElementById('ov').classList.remove('hidden');
   document.getElementById('cnOk').onclick = closeSheet;
@@ -1846,8 +1920,15 @@ function closeSheet(){ document.getElementById('ov').classList.add('hidden'); }
 
 /* ---------- 操作 ---------- */
 document.addEventListener('keydown', e => { if(e.key === 'Enter' && e.target.classList && e.target.classList.contains('bigbtn')) e.target.click(); });
+// β1.6.98：「読みました」にチェックを入れると、「同意する」が押せるようになる
+document.addEventListener('change', e => { if(e.target && e.target.id === 'readChk'){ const b = document.getElementById('btnConsentYes'); if(b) b.disabled = !e.target.checked; } });
 document.addEventListener('click', e => {
-  const t = e.target.closest('button,[data-go]'); if(!t) return;
+  const t = e.target.closest('button,[data-go]');
+  if(!t){   // β1.6.85：項目のどこかをタップすると「済」の印をつける／はずす（電話番号のリンクは除く）
+    const it = e.target.closest('.item[data-chk]');
+    if(it && !e.target.closest('a')){ const id = it.dataset.chk; S.checks[id] = !S.checks[id]; save(); renderSchedule(); }
+    return;
+  }
   if(t.dataset.back) return goBack();
   if(t.dataset.evr){ const v = Number(t.dataset.evv); if(EV.r[t.dataset.evr] === v) delete EV.r[t.dataset.evr]; else EV.r[t.dataset.evr] = v; evSave(); evMsg = ''; return render('vEval', true); }   // β1.6.66
   if(t.dataset.evrole){ EV.role = t.dataset.evrole; evSave(); evMsg = ''; return render('vEval', true); }
@@ -1859,7 +1940,6 @@ document.addEventListener('click', e => {
   if(t.dataset.btab){ beforeTab = t.dataset.btab; document.getElementById('vBefore').innerHTML = beforeHTML() + backBtn(); return window.scrollTo(0,0); }
   if(t.dataset.day){ selDay = t.dataset.day; renderSchedule(); return window.scrollTo(0,0); }
   if(t.dataset.go) return show(t.dataset.go);
-  if(t.dataset.chk){ const id = t.dataset.chk; S.checks[id] = !S.checks[id]; save(); return renderSchedule(); }
   if(t.classList.contains('choice') && t.dataset.place){ S._pick = t.dataset.place; document.querySelectorAll('#vSetup .choice').forEach(b=>b.setAttribute('aria-pressed', b===t)); return; }
   if(t.dataset.stool){
     const lv = Number(t.dataset.stool);
@@ -1874,7 +1954,9 @@ document.addEventListener('click', e => {
     case 'btnEvalAgain': evDone = false; return render('vEval');
     case 'btnA2hs': case 'btnA2hsLink': return openA2hs();   // β1.6.57
     case 'btnA2hsLater': a2hsSet('later'); return renderSchedule();
-    case 'btnConsentYes': return setConsent(true);
+    case 'btnSendHow': return openInfo('記録の送り方', sendHowHTML(S.code && !DEMO ? S.code : 'K7MQ2X'));   // β1.6.95
+    case 'btnHandling': return openInfo('記録の取り扱い', handlingHTML());
+    case 'btnConsentYes': { const ck = document.getElementById('readChk'); if(!ck || !ck.checked) return; return setConsent(true); }   // β1.6.98：チェックが入っているときだけ
     case 'btnConsentNo': return setConsent(false);
     case 'btnPreOK': { S.checks.preOK = true; save(); return goBack(); }
     case 'btnStart': {
@@ -1899,18 +1981,15 @@ document.addEventListener('click', e => {
       computeCheck();
       let after = '';
       if(i === CHECK_AT && !S.stopMobi){
-        // 必ず飲む分を飲み終えた：最新の便で判断
-        if(!S.stools.length) after = 'pick';
-        else if(isClear(lastLv())){ S.allDone = true; after = 'doneBase'; }
-        else after = 'ask';   // β1.6.77：①〜③までのときは、追加へ進む前に「トイレに行きましたか？」と一度聞く
+        // β1.6.89：必ず飲む分を飲み終えたときの便で判断する。まず記録の確認（5回に足りなければ「忘れていませんか？」、足りていれば「最後の記録のあとにトイレに行きましたか？」）
+        bq = { countOK:null }; after = 'base';
       }else if(i === EXTRA_AT && i !== CHECK_AT && !S.stopMobi){
         // 追加分を飲み終えた：きれいでなければ電話
         if(isClear(lastLv())) S.allDone = true; else { S.extraCall = true; after = 'callExtra'; }
       }
       save(); renderNav();
       if(after){ window.scrollTo(0,0);
-        if(after === 'pick') return openStoolPicker('check');
-        if(after === 'ask') return openStoolPicker('ask');
+        if(after === 'base') return openBaseCheck();
         if(after === 'callExtra') return openCallNotice('extra');
         return openStoolResult(lastLv(), after);
       }
@@ -1920,7 +1999,7 @@ document.addEventListener('click', e => {
     case 'btnUndo':
       if(S.curDone) S.curDone = false; else { S.drinks.pop(); S.curDone = false; }
       computeCheck();
-      if(!pastBase()){ S.baseOK = false; S.baseCall = ''; S.callAck = false; }
+      if(!pastBase()){ S.baseOK = false; S.baseCall = ''; S.callAck = false; bq = { countOK:null }; }
       if(!pastExtra()){ S.extraCall = false; S.extraAck = false; }
       save(); return renderNav();
     case 'btnStoolUndo': delStool(S.stools.pop()); unclearIfNeeded(); computeCheck(); if(!S.stools.length && !S.callAck) S.baseOK = false; save(); return renderNav();
@@ -1931,15 +2010,28 @@ document.addEventListener('click', e => {
       if(pastExtra() && S.extraCall && !S.extraAck) S.extraAck = true; else { S.callAck = true; S.baseOK = true; }
       save(); renderNav(); return window.scrollTo(0,0);
     case 'btnCheck': return openStoolPicker('check');
-    case 'btnNotGone': {   // β1.6.77：トイレに行っていない → 最後の記録（①〜③）のまま追加分へ
+    case 'btnBaseCheck': return openBaseCheck();   // β1.6.89
+    case 'btnForgotYes': return openBaseCheck('count');
+    case 'btnForgotNo': {   // β1.6.90：「忘れていない」なら、トイレに行ったかは聞き直さず、記録のとおり（最後の記録の色と回数）で判断する
       if(!(pastBase() && !baseJudged() && S.stools.length)) return closeSheet();
-      S.baseOK = true; save(); closeSheet(); renderNav(); window.scrollTo(0,0);
-      return openStoolResult(lastLv(), 'toExtra'); }
+      bq.countOK = null; const lv = lastLv(), res = judgeStool(lv);
+      save(); closeSheet(); renderNav(); window.scrollTo(0,0);
+      return openStoolResult(lv, res); }
+    case 'btnCnt5': bq.countOK = true; return openBaseCheck('color');
+    case 'btnCntLt': bq.countOK = false; return openBaseCheck('color');
+    case 'btnNotGone': {   // β1.6.89：最後の記録のあとにトイレに行っていない → 最後の記録の色と、排便の回数で判断
+      if(!(pastBase() && !baseJudged() && S.stools.length)) return closeSheet();
+      const lv = lastLv(), res = judgeStool(lv);
+      save(); closeSheet(); renderNav(); window.scrollTo(0,0);
+      return openStoolResult(lv, res); }
     case 'btnPcReset': {   // β1.6.74：パソコンで開いたときだけ。検査日などを消して「はじめに」から（β1.6.75：試作版のときだけ）
       if(!pcResetOK()) return;
-      if(!confirm('このパソコンに残っている検査日などの記録を消して、最初からやり直しますか？')) return;
-      try{ localStorage.removeItem(KEY); }catch(e){}
-      location.href = location.pathname; return; }
+      // β1.6.87：確認の窓（confirm）は、Claudeのプレビューなどでは出ずに何も起きないことがあるため、ボタンをもう一度押す方式に。ページの読み込み直しもせず、その場で最初に戻す
+      if(!t.dataset.armed){ t.dataset.armed = '1'; t.textContent = '記録を消して最初からやり直す（もう一度押すと実行）'; setTimeout(() => { if(t.isConnected){ delete t.dataset.armed; t.textContent = '最初からやり直す（試作版のみ）'; } }, 6000); return; }
+      const m = S.method; try{ localStorage.removeItem(KEY); }catch(e){}
+      try{ history.replaceState(null, '', location.pathname); }catch(e){}   // アドレスの古い検査日（?d=…）も消す
+      S = blankState(); S.method = m; save(); selDay = null; closeSheet(); window.scrollTo(0,0);
+      return resetTo('vSetup'); }
     case 'btnUnclear': {   // ④・⑤の押し間違い：最後に続いている④・⑤の記録をまとめて消す
       while(S.stools.length && S.stools[S.stools.length-1].lv >= CONFIG.clearLevel) delStool(S.stools.pop());
       computeCheck(); S.stopMobi = false; S.allDone = false; S.lastWaterInProg = false;
@@ -1949,7 +2041,8 @@ document.addEventListener('click', e => {
     case 'btnFinish': S.allDone = true; save(); renderNav(); return window.scrollTo(0,0);
     case 'btnSick': return openSick();
     case 'btnDemoReset': {   // お試し版：最初からやり直す（飲み方はQRコードの指定のまま）
-      if(!confirm('お試しの記録を消して、最初からやり直しますか？')) return;
+      // β1.6.87：確認の窓（confirm）は出せない環境があるため、ボタンをもう一度押す方式に
+      if(!t.dataset.armed){ t.dataset.armed = '1'; const orig = t.textContent; t.textContent = 'もう一度押すと消えます'; setTimeout(() => { if(t.isConnected){ delete t.dataset.armed; t.textContent = orig; } }, 6000); return; }
       const m = S.method; try{ localStorage.removeItem(KEY); }catch(e){}
       S = blankState(); S.method = m; save(); selDay = null; closeSheet(); window.scrollTo(0,0);
       if(needConsent()){ consentNext = () => resetTo('vSetup'); return resetTo('vConsent'); }   // β1.6.27：やり直すときも同意の画面から
@@ -2033,6 +2126,7 @@ setInterval(() => { if(document.visibilityState === 'visible' && shownDay && ymd
     const ck = S.checks; RESET_PROGRESS(); S.checks = ck; save();
   }
   rebuild(); shownDay = ymdOf(new Date());
+  sendConsentLog();
   if(S.code) scheduleSync();
   // β1.6.26：番号つきのQRコードで初めて開いたときは、記録の取り扱いへの同意を先に聞く
   const go = () => {
