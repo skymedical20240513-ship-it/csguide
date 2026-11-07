@@ -1,0 +1,18 @@
+{
+  "id": "./tablet.html",
+  "name": "大腸カメラ準備説明（看護師用）",
+  "short_name": "大腸説明",
+  "start_url": "./tablet.html",
+  "scope": "./tablet.html",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#A9DBF8",
+  "theme_color": "#2A8CD8",
+  "lang": "ja",
+  "icons": [
+    { "src": "tablet-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "tablet-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "tablet-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
