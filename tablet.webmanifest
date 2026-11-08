@@ -6,7 +6,7 @@
   "scope": "./tablet.html",
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],
-  "orientation": "any",
+  "orientation": "landscape",
   "background_color": "#A9DBF8",
   "theme_color": "#2A8CD8",
   "lang": "ja",
