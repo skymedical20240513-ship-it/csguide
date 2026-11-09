@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="tablet.webmanifest">
 <meta name="theme-color" content="#2A8CD8">
-<title>大腸内視鏡検査の説明（看護師用タブレット）Ver2.17.1</title>
+<title>大腸内視鏡検査の説明（看護師用タブレット）Ver2.18.0</title>
 <style>
 :root{
   --navy:#17325C; --navy2:#2B4A7A; --sky1:#4DB0EE; --sky2:#A9DBF8; --sky3:#E6F5FD;
@@ -759,6 +759,9 @@ button{touch-action:manipulation}
 #pin.on{display:flex}
 /* Ver2.17.0 時刻をクルクル回して選ぶ */
 #sheet input.tpin{cursor:pointer;background:#F4F9FF;text-align:center}
+/* Ver2.18.0 1日1回の自動更新のお知らせ */
+#updMsg{position:fixed;left:50%;bottom:8%;transform:translateX(-50%);background:var(--navy);color:#fff;border-radius:999px;padding:16px 36px;font-size:24px;font-weight:700;z-index:14;display:none;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+#updMsg.on{display:block}
 #tpick{position:fixed;inset:0;background:rgba(10,40,80,.5);display:none;align-items:center;justify-content:center;z-index:13}
 #tpick.on{display:flex}
 #tpick .box{background:#fff;border-radius:28px;padding:20px 30px 22px;color:var(--navy);text-align:center;min-width:440px}
@@ -1267,6 +1270,7 @@ button{touch-action:manipulation}
   <div class="vwrap"><video id="vEl" controls playsinline preload="auto" controlslist="nodownload noplaybackrate" disablepictureinpicture></video><p class="vmsg" id="vMsg"></p></div>
   <div class="vcredit">動画提供：EAファーマ株式会社</div>
 </div></div>
+<div id="updMsg" role="status"></div>
 <div id="tpick" role="dialog" aria-modal="true" aria-label="時刻を選ぶ"><div class="box">
   <h2 id="tpTitle">時刻を選ぶ</h2>
   <div class="tpcols">
@@ -1288,7 +1292,7 @@ button{touch-action:manipulation}
 
 <script>
 document.querySelectorAll('img[data-dup]').forEach(i=>{const o=document.querySelector('img[data-n="'+i.dataset.dup+'"]');if(o)i.src=o.src;});
-const VERSION='Ver2.17.1';
+const VERSION='Ver2.18.0';
 const DEF={fs:1.15,method:'2to1',cup:180,chk:0,dinner:'20:00',laxa:'21:00',bp:'7:00',pw:'0000'};
 let S=Object.assign({},DEF);
 try{const s=JSON.parse(localStorage.getItem('csTablet1')||'null');if(s)S=Object.assign(S,s)}catch(e){}
@@ -1675,6 +1679,46 @@ document.getElementById('phoneIllo').innerHTML=phoneSVG();
 document.getElementById('menuCups').innerHTML=cupSVG('mp')+cupSVG('mp')+cupSVG('wt');
 document.getElementById('topVer').textContent=VERSION;
 document.getElementById('verLine').textContent='大腸内視鏡検査の説明（看護師用タブレット） '+VERSION;
+/* Ver2.18.0 1日1回、GitHub Pagesに新しい版がないか確かめる（アプリを開いたまま・ピン止めのままで更新） */
+(function(){
+  const KEY='csTabletUpd1';
+  const ld=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}};
+  const sv=o=>{try{localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}};
+  const today=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
+  const hm=t=>{const d=new Date(t);return (d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')};
+  const line=()=>{const u=ld(),el=document.getElementById('verLine');
+    let t='大腸内視鏡検査の説明（看護師用タブレット） '+VERSION;
+    if(u.last)t+='　／　更新の確認：'+hm(u.last)+(u.res==='ok'?'（最新です）':u.res==='new'?(u.to===VERSION?'（'+u.to+'に更新しました）':'（新しい版'+u.to+'あり。次の日にもう一度更新します）'):'');
+    el.textContent=t;};
+  line();
+  if(location.protocol!=='https:')return;
+  let lastTouch=Date.now(),busyChk=false;
+  ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{lastTouch=Date.now()},true));
+  const quiet=()=>cur==='s-top'&&document.visibilityState==='visible'&&Date.now()-lastTouch>60000&&
+    !['toc','sheet','pin','vplay','tpick'].some(id=>{const e=document.getElementById(id);return e&&e.classList.contains('on')});
+  async function check(){
+    const u=ld();
+    if(busyChk||u.day===today()||(u.fail&&Date.now()-u.fail<30*60000)||!quiet())return;
+    busyChk=true;
+    try{
+      const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),15000);
+      const r=await fetch('tablet.html?upd='+Date.now(),{cache:'no-store',signal:ctl.signal});clearTimeout(tm);
+      if(!r.ok)throw 0;
+      const m=/const VERSION='(Ver[0-9.]+)'/.exec(await r.text());if(!m)throw 0;
+      const v=m[1],now=Date.now();
+      try{const g=await navigator.serviceWorker.getRegistration('./tablet.html');if(g)g.update();}catch(e){}
+      if(v===VERSION||u.to===v&&u.tried===today()){sv({day:today(),last:now,res:v===VERSION?'ok':'',to:u.to});line();return;}
+      if(!quiet())return;
+      sv({day:today(),last:now,res:'new',to:v,tried:today()});
+      const b=document.getElementById('updMsg');b.textContent='新しい版（'+v+'）に更新します';b.classList.add('on');
+      setTimeout(()=>location.reload(),2500);
+    }catch(e){const o=ld();o.fail=Date.now();sv(o);}
+    finally{busyChk=false;}
+  }
+  setInterval(check,60000);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(check,61000)});
+  window.__updCheck=check;
+})();
 renderDay();refresh();show('s-top');
 
 /* アプリ（ホーム画面にインストール）として使う */
